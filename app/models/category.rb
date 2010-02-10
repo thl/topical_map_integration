@@ -1,4 +1,6 @@
 class Category < TopicalMapResource
+  headers['Host'] = TopicalMapResource.headers['Host']
+  
   acts_as_active_resource_tree
   @@cached_categories_by_title = Hash.new
   

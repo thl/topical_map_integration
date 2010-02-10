@@ -23,17 +23,17 @@ module ActiveResource
   end
 end
 
-class ActiveResource::Connection
-  original_initialize=self.instance_method(:initialize)
-  if Socket.gethostname.downcase =~ /sds[3-8].itc.virginia.edu/
-    define_method :initialize do |*args|
-      original_initialize.bind(self).call(*args)
-      @default_header = {'Host'=>site.host}
-      site.host='127.0.0.1'
-    end 
+#class ActiveResource::Connection
+#  original_initialize=self.instance_method(:initialize)
+#  if Socket.gethostname.downcase =~ /sds[3-8].itc.virginia.edu/
+#    define_method :initialize do |*args|
+#      original_initialize.bind(self).call(*args)
+#      @default_header = {'Host'=>site.host}
+#      site.host='127.0.0.1'
+#    end 
     
-    define_method :host_from_header do |*args|
-      return @default_header['Host']
-    end
-  end
-end
+#    define_method :host_from_header do |*args|
+#      return @default_header['Host']
+#    end
+#  end
+#end

@@ -16,7 +16,7 @@ module ActiveResource
         
         def prefix_for_url
           host = site.host
-          host = connection.host_from_header if host=='127.0.0.1'
+          host = headers['Host'] if host=='127.0.0.1'
           "#{site.scheme}://#{host}:#{site.port}"
         end
       end

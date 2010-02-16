@@ -8,7 +8,7 @@ var ModelSearcher = {
 	
 	// A script on the same subdomain. When a URL is appended to this string, the resulting URL should return the original URL's content.
 	// The proxy can be bypassed by using service URLs that don't begin with "http" (and are thus on the subdomain and don't need a proxy)
-	proxy: "/thl/utils/proxy/",
+	proxy: "/thl/utils/proxy/?proxy_url=",
 	
 	// The id attribute of the div which contains all of DOM elements for this 
 	divId: "",

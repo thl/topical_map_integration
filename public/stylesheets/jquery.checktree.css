@@ -73,4 +73,4 @@ ul.tree li .half_checked {
 	display: none;
 }
 
-ul li { line-height: 1.6em }
+ul.tree li { line-height: 1.6em }

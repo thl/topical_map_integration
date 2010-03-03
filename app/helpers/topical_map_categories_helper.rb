@@ -1,7 +1,7 @@
 module TopicalMapCategoriesHelper
 
   def category_selector_includes
-    [javascript_include_tag('jquery.autocomplete', 'jquery.checktree', 'model-searcher'), stylesheet_link_tag('jquery.autocomplete', 'jquery.checktree')].join("\n")
+    [javascript_include_tag('jquery.autocomplete', 'jquery.checktree', 'model-searcher', 'jquery.draggable.popup'), stylesheet_link_tag('jquery.autocomplete', 'jquery.checktree', 'jquery.draggable.popup')].join("\n")
   end
 
   def category_selector_includes_old

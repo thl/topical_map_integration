@@ -26,7 +26,7 @@ module TopicalMapCategoriesHelper
         		fieldName: '#{field_name}',
         		fieldLabel: '#{field_label}',
         		selectedObjects: [#{selected_object}]#{searcher_options},
-        		proxy: '#{ActionController::Base.relative_url_root}/kmaps_integration/utils/proxy/?proxy_url='
+        		proxy: '#{ActionController::Base.relative_url_root}/proxy_engine/utils/proxy/?proxy_url='
         	});
         });
       </script>"
@@ -54,7 +54,7 @@ module TopicalMapCategoriesHelper
         		fieldName: '#{field_name}',
         		fieldLabel: '',
         		selectedObjects: [#{selected_object}]#{searcher_options},
-        		proxy: '#{ActionController::Base.relative_url_root}/kmaps_integration/utils/proxy/?proxy_url='
+        		proxy: '#{ActionController::Base.relative_url_root}/proxy_engine/utils/proxy/?proxy_url='
         	});
         });
       </script>"

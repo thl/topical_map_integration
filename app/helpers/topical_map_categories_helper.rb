@@ -19,10 +19,13 @@ module TopicalMapCategoriesHelper
       searcher_options = ', '+options[:options].collect{|option, value| "#{option}: #{escape_javascript(value)}" }.join(', ')
     end
     field_label = options[:field_label] || ''
+    div_id = "tmb_category_selector_#{field_name}".gsub(/[^\w_]/, '')
+    js_variable_name = "category_searcher_#{field_name}".gsub(/[^\w_]/, '')
     return_str += "
       <script type=\"text/javascript\">
         jQuery(document).ready(function(){
-        	ModelSearcher.init('tmb_category_selector', '#{Category.find(category_id).get_url(:list_with_features, :format => 'json')}', '#{Category.find(category_id).get_url(:all_with_features, :format => 'json')}', {
+          var #{js_variable_name} = new ModelSearcher();
+        	#{js_variable_name}.init('#{div_id}', '#{Category.find(category_id).get_url(:list_with_features, :format => 'json')}', '#{Category.find(category_id).get_url(:all_with_features, :format => 'json')}', {
         		fieldName: '#{field_name}',
         		fieldLabel: '#{field_label}',
         		selectedObjects: [#{selected_object}]#{searcher_options},
@@ -48,11 +51,13 @@ module TopicalMapCategoriesHelper
     if !options.empty?
       searcher_options = ', '+options.collect{|option, value| "#{option}: #{escape_javascript(value)}" }.join(', ')
     end
+    # Create a unique name for the JS variable that will hold the ModelSearcher object.
+    js_variable_name = "ms_#{instance_variable_name.to_s}_#{field_name.to_s}".gsub(/[^\w_]/, '')
     return_str += "
       <script type=\"text/javascript\">
         jQuery(document).ready(function(){
-        	ms = new ModelSearcher();
-        	ms.init('#{div_id}', '#{main_category.get_url(:list, :format => 'json')}', '#{main_category.get_url(:all, :format => 'json')}', {
+        	var #{js_variable_name} = new ModelSearcher();
+        	#{js_variable_name}.init('#{div_id}', '#{main_category.get_url(:list, :format => 'json')}', '#{main_category.get_url(:all, :format => 'json')}', {
         		fieldName: '#{field_name}',
         		fieldLabel: '',
         		selectedObjects: [#{selected_object}]#{searcher_options},

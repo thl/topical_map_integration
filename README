@@ -38,14 +38,13 @@ Finally, in the new/edit view, you do this:
 @parent_object_type is the main category, in this case feature type and the next two arguments
 are new name of the form variable and the name of the attribute.
 
-It is currently only possible to have one category selector in a single page, due to the nature of the
-ModelSearcher JavaScript class and the Ajax calls it uses. By default the category
-selector inserts the required stylesheet and JavaScript file (where the call is made in the template).
-You can override this behavior and explicitly tell it not to include such tags by sending false to the
-fourth argument in case you are using multiple selectors (to avoid inserting several times the same
-stylesheet and JavaScript code) or if you want the include tags for the stylesheets and
-JavaScript in the header and not the body. You can use the tag helper category_selector_includes to
-generate the necessary JavaScript and stylesheet html tags. The code would look like this:
+By default the category selector inserts the required stylesheet and JavaScript file (where the call
+is made in the template). You can override this behavior and explicitly tell it not to include such 
+tags by sending false to the fourth argument in case you are using multiple selectors (to avoid 
+inserting several times the same stylesheet and JavaScript code) or if you want the include tags for
+the stylesheets and JavaScript in the header and not the body. You can use the tag helper
+category_selector_includes to generate the necessary JavaScript and stylesheet html tags. The code
+would look like this:
 
 <%= category_selector_includes %>
 <p>

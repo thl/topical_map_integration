@@ -39,6 +39,7 @@ module TopicalMapCategoriesHelper
   
   def category_selector(main_category, instance_variable_name, field_name, includes = true, options = {})
     return_str = includes ? category_selector_includes : ''
+    div_id = "#{instance_variable_name.to_s}_#{field_name.to_s}_tmb_category_selector"
     selected_category = instance_variable_get("@#{instance_variable_name.to_s}").send(field_name)
     selected_object = selected_category.nil? ? "''" : "{id: '#{escape_javascript(selected_category.id)}', name: '#{escape_javascript(selected_category.title)}'}"
     category_id = main_category.id
@@ -50,7 +51,8 @@ module TopicalMapCategoriesHelper
     return_str += "
       <script type=\"text/javascript\">
         jQuery(document).ready(function(){
-        	ModelSearcher.init('tmb_category_selector', '#{main_category.get_url(:list, :format => 'json')}', '#{main_category.get_url(:all, :format => 'json')}', {
+        	ms = new ModelSearcher();
+        	ms.init('#{div_id}', '#{main_category.get_url(:list, :format => 'json')}', '#{main_category.get_url(:all, :format => 'json')}', {
         		fieldName: '#{field_name}',
         		fieldLabel: '',
         		selectedObjects: [#{selected_object}]#{searcher_options},
@@ -58,7 +60,7 @@ module TopicalMapCategoriesHelper
         	});
         });
       </script>"
-    return_str += '<span id="tmb_category_selector"></span>'
+    return_str += "<span id=\"#{div_id}\"></span>"
   end
   
   

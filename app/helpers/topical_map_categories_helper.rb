@@ -45,8 +45,9 @@ module TopicalMapCategoriesHelper
     div_id = "#{instance_variable_name.to_s}_#{field_name.to_s}_tmb_category_selector"
     selected_category = instance_variable_get("@#{instance_variable_name.to_s}").send(field_name)
     selected_object = selected_category.nil? ? "''" : "{id: '#{escape_javascript(selected_category.id)}', name: '#{escape_javascript(selected_category.title)}'}"
-    category_id = main_category.id
     field_name = instance_variable_name.to_s+'['+field_name.to_s+'_id]'
+    list_url = main_category.nil? ? Category.get_url(:list, :format => 'json') : main_category.get_url(:list, :format => 'json')
+    all_url = main_category.nil? ? Category.get_url(:all, :format => 'json') : main_category.get_url(:all, :format => 'json')
     searcher_options = ''
     if !options.empty?
       searcher_options = ', '+options.collect{|option, value| "#{option}: #{escape_javascript(value)}" }.join(', ')
@@ -57,7 +58,7 @@ module TopicalMapCategoriesHelper
       <script type=\"text/javascript\">
         jQuery(document).ready(function(){
         	var #{js_variable_name} = new ModelSearcher();
-        	#{js_variable_name}.init('#{div_id}', '#{main_category.get_url(:list, :format => 'json')}', '#{main_category.get_url(:all, :format => 'json')}', {
+        	#{js_variable_name}.init('#{div_id}', '#{list_url}', '#{all_url}', {
         		fieldName: '#{field_name}',
         		fieldLabel: '',
         		selectedObjects: [#{selected_object}]#{searcher_options},

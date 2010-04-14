@@ -20,11 +20,15 @@ module TopicalMapCategoriesHelper
     end
     field_label = options[:field_label] || ''
     div_id = "tmb_category_selector_#{field_name}".gsub(/[^\w_]/, '')
+    # Create a unique name for the JS variable that will hold the ModelSearcher object.
     js_variable_name = "category_searcher_#{field_name}".gsub(/[^\w_]/, '')
+    # The variable holding the ModelSearcher needs to be defined outside of jQuery(document).ready(), so that it
+    # has global scope and can be accessed by other JavaScript if need be.
     return_str += "
       <script type=\"text/javascript\">
+        var #{js_variable_name};
         jQuery(document).ready(function(){
-          var #{js_variable_name} = new ModelSearcher();
+          #{js_variable_name} = new ModelSearcher();
         	#{js_variable_name}.init('#{div_id}', '#{Category.find(category_id).get_url(:list_with_features, :format => 'json')}', '#{Category.find(category_id).get_url(:all_with_features, :format => 'json')}', {
         		fieldName: '#{field_name}',
         		fieldLabel: '#{field_label}',
@@ -54,10 +58,13 @@ module TopicalMapCategoriesHelper
     end
     # Create a unique name for the JS variable that will hold the ModelSearcher object.
     js_variable_name = "ms_#{instance_variable_name.to_s}_#{field_name.to_s}".gsub(/[^\w_]/, '')
+    # The variable holding the ModelSearcher needs to be defined outside of jQuery(document).ready(), so that it
+    # has global scope and can be accessed by other JavaScript if need be.
     return_str += "
       <script type=\"text/javascript\">
+        var #{js_variable_name};
         jQuery(document).ready(function(){
-        	var #{js_variable_name} = new ModelSearcher();
+          #{js_variable_name} = new ModelSearcher();
         	#{js_variable_name}.init('#{div_id}', '#{list_url}', '#{all_url}', {
         		fieldName: '#{field_name}',
         		fieldLabel: '',

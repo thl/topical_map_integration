@@ -48,7 +48,7 @@ module TopicalMapCategoriesHelper
     return_str = includes ? category_selector_includes : ''
     div_id = "#{instance_variable_name.to_s}_#{field_name.to_s}_tmb_category_selector"
     selected_category = instance_variable_get("@#{instance_variable_name.to_s}").send(field_name)
-    selected_object = selected_category.nil? ? "''" : "{id: '#{escape_javascript(selected_category.id)}', name: '#{escape_javascript(selected_category.title)}'}"
+    selected_object = selected_category.nil? ? "''" : "{id: '#{selected_category.id}', name: '#{escape_javascript(selected_category.title)}'}"
     field_name = instance_variable_name.to_s+'['+field_name.to_s+'_id]'
     list_url = main_category.nil? ? Category.get_url(:list, :format => 'json') : main_category.get_url(:list, :format => 'json')
     all_url = main_category.nil? ? Category.get_url(:all, :format => 'json') : main_category.get_url(:all, :format => 'json')

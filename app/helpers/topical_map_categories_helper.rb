@@ -98,6 +98,6 @@ module TopicalMapCategoriesHelper
   end
     
   def loading_kmaps_animation_script(id)
-    "$(\'##{id}_div\').css(\'background\', \'url(/images/loadingAnimation2.gif) no-repeat center right\')"
+    "$(\'##{id}_div\').css(\'background\', \'url(../images/loadingAnimation2.gif) no-repeat center right\')"
   end
 end

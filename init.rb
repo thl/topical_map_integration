@@ -1,6 +1,5 @@
 ActiveResource::Base.send :include, ActiveResource::Acts::Tree
 ActiveResource::Base.send :include, ActiveResource::Extensions::URL
-ActiveResource::Base.send :include, ActiveResource::Extensions::CustomURL
 
 # Include hook code here
 require 'topical_map_builder_integration'

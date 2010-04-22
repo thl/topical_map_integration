@@ -121,7 +121,7 @@ function ModelSearcher(){
 				if(thisModelSearcher.treeLoaded){
 					jQuery('#'+thisModelSearcher.treePopupId).show();
 				}else{
-					thisModelSearcher.treeLoading.html(' <img src="/images/ajax-loader.gif" />');
+					thisModelSearcher.treeLoading.html(' <img src="../images/ajax-loader.gif" />');
 					jQuery.getJSON(thisModelSearcher.treeService, function(data){
 						thisModelSearcher.treeHtml = thisModelSearcher.createTreeFromArray(data.category ? data.category.categories : data.categories);
 						thisModelSearcher.loadPopup();

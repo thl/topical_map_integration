@@ -8,6 +8,8 @@ Install:
 
 app> script/plugin install -x http://ndlb.svn.sourceforge.net/svnroot/ndlb/portal/ror/plugins/topical_map_builder_integration/trunk/
 
+This plugin relies on http://github.com/thl/active_resource_extensions . Make sure you add it to your project too!
+
 Integrate JavaScript, stylesheet, views and controller:
 
 app> script/generate topical_map_categories

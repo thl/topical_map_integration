@@ -50,13 +50,12 @@ module TopicalMapCategoriesHelper
     selected_category = instance_variable_get("@#{instance_variable_name.to_s}").send(field_name)
     selected_object = selected_category.nil? ? "''" : "{id: '#{selected_category.id}', name: '#{escape_javascript(selected_category.title)}'}"
     field_name = instance_variable_name.to_s+'['+field_name.to_s+'_id]'
+    return_str += "<input type='hidden' name=\"#{field_name}\" id='searcher_id_input' />"
     if main_category.nil?
-      list_url = Category.get_url(:list, :format => 'json')
-      all_url = Category.get_url(:all, :format => 'json')
       options[:hasTree] = 'false'
+      selected_root = 'All'
     else
-      list_url = main_category.get_url(:list, :format => 'json')
-      all_url = main_category.get_url(:all, :format => 'json')
+      selected_root = main_category.id
     end
     searcher_options = ''
     if !options.empty?
@@ -68,20 +67,37 @@ module TopicalMapCategoriesHelper
     # has global scope and can be accessed by other JavaScript if need be.
     return_str += "
       <script type=\"text/javascript\">
-        var #{js_variable_name};
+        var #{js_variable_name},
+            list_url = \"#{Category.get_url_template(:list, :format => 'json')}\",
+            all_url = \"#{Category.get_url_template(:all, :format => 'json')}\",
+            var_name = \"#{js_variable_name}\",
+            tmb_div = \"#{div_id}\",
+            selected_root = \"#{selected_root}\",
+            tmb_options = {
+              fieldName: '#{field_name}',
+          		fieldLabel: '',
+          		selectedObjects: [#{selected_object}]#{searcher_options},
+          		proxy: '#{ActionController::Base.relative_url_root}/proxy_engine/utils/proxy/?proxy_url='
+          	};
+        function all_searcher() {  
+              searcher = new ModelSearcher();
+            	searcher.init('#{div_id}', '#{Category.get_url(:list, :format => 'json')}', '#{Category.get_url(:all, :format => 'json')}', tmb_options );
+        }
         jQuery(document).ready(function(){
-          #{js_variable_name} = new ModelSearcher();
-        	#{js_variable_name}.init('#{div_id}', '#{list_url}', '#{all_url}', {
-        		fieldName: '#{field_name}',
-        		fieldLabel: '',
-        		selectedObjects: [#{selected_object}]#{searcher_options},
-        		proxy: '#{ActionController::Base.relative_url_root}/proxy_engine/utils/proxy/?proxy_url='
-        	});
+          if ( selected_root != 'All' ) {
+            reinit();
+          } else {
+            all_searcher();
+          }
         });
       </script>"
-    return_str += "<span id=\"#{div_id}\"></span>"
+    return_str += "<input type='text' name='searcher_autocomplete' id='searcher_autocomplete' style='padding:3px;width: 300px;' autofocus /><span id=\"#{div_id}\"></span>"
   end
   
+  def topic_filter
+    result = select_tag :root_topics, options_for_select(['All'] + Topic.roots.collect{|topic| [topic.title, topic.id]}, (@media_category_association.root.nil? ? 'All' : @media_category_association.root.id)), :onchange => "reinit(); if ( this.value == 'All') { $('#browse_link').hide()} else {$('#browse_link').show()}; $('#searcher_autocomplete').focus()", :style => 'font-size: 9pt'
+    result << "&nbsp; <a id='browse_link' href='#' style='font-size:9pt; display:none'>Browse</a>"
+  end  
   
   def category_selector_old(main_category, instance_variable_name, field_name, includes = true)
     tag_prefix = "#{instance_variable_name}_#{field_name}"

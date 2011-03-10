@@ -95,7 +95,7 @@ module TopicalMapCategoriesHelper
   end
   
   def topic_filter
-    result = select_tag :root_topics, options_for_select(['All'] + Topic.roots.collect{|topic| [topic.title, topic.id]}, (@media_category_association.root.nil? ? 'All' : @media_category_association.root.id)), :onchange => "reinit(); if ( this.value == 'All') { $('#browse_link').hide()} else {$('#browse_link').show()}; $('#searcher_autocomplete').focus()", :style => 'font-size: 9pt'
+    result = select_tag :root_topics, options_for_select(['All'] + Topic.roots.collect{|topic| [topic.title, topic.id]}, (@media_category_association.nil? || @media_category_association.root.nil? ? 'All' : @media_category_association.root.id)), :onchange => "reinit(); if ( this.value == 'All') { $('#browse_link').hide()} else {$('#browse_link').show()}; $('#searcher_autocomplete').focus()", :style => 'font-size: 9pt'
     result << "&nbsp; <a id='browse_link' href='#' style='font-size:9pt; display:none'>Browse</a>"
   end  
   

@@ -60,7 +60,8 @@ function ModelSearcher(){
 	
 	// See the attribute documentation above for explanations of these arguments
 	this.init = function(divId, listService, treeService, options){
-		var that = this;
+		var that = this,
+			root_topics = document.getElementById('root_topics');
 
 		this.listService = listService;
 		this.treeService = treeService;
@@ -125,7 +126,7 @@ function ModelSearcher(){
 			return false;
 		});
 		
-		if ( document.getElementById('root_topics').value != 'All' ) jQuery('#browse_link').show().click(function(){that.activatePopup()});
+		if ( root_topics && root_topics.value != 'All' ) jQuery('#browse_link').show().click(function(){that.activatePopup()});
 	};
 	
 	this.activatePopup = function() {

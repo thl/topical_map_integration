@@ -218,7 +218,7 @@ function ModelSearcher(){
 	
 	this.checkAnnotationState = function() {
 		if ( jQuery('.tree-names').length > 1 ) {
-			jQuery('#media_category_association_string_value, #media_category_association_numeric_value').attr('disabled', 'disabled').closest('tr').fadeOut();
+			jQuery('#mobj').find('input[id*=string_value], input[id*=numeric_value]').attr('disabled', 'disabled').closest('tr').fadeOut();
 		} else {
 			jQuery('.annotation').fadeIn().find('#media_category_association_string_value, #media_category_association_numeric_value').removeAttr('disabled');
 		}

@@ -91,12 +91,19 @@ module TopicalMapCategoriesHelper
           }
         });
       </script>"
-    return_str += "<input type='text' name='searcher_autocomplete' id='searcher_autocomplete' style='padding:3px;width: 300px;' autofocus /><span id=\"#{div_id}\"></span>"
+    val_field = params[:action] == 'edit' ? selected_category.title : "<input type='text' name='searcher_autocomplete' id='searcher_autocomplete' style='padding:3px;width: 300px;' autofocus /><span id=\"#{div_id}\"></span>"
+    return_str += val_field
   end
   
   def topic_filter
-    result = select_tag :root_topics, options_for_select(['All'] + Topic.roots.collect{|topic| [topic.title, topic.id]}, (@media_category_association.nil? || @media_category_association.root.nil? ? 'All' : @media_category_association.root.id)), :onchange => "reinit(); if ( this.value == 'All') { $('#browse_link').hide()} else {$('#browse_link').show()}; $('#searcher_autocomplete').focus()", :style => 'font-size: 9pt'
-    result << "&nbsp; <a id='browse_link' href='#' style='font-size:9pt; display:none'>Browse</a>"
+    unless params[:action] == 'edit'
+      result = "<tr><td> </td></tr>"
+      result << "<tr><td style='background-color: #f1f1f1;text-align: right; font-size:10pt;border: 1pt solid #ccc; border-right-style: none'>Topic Filter</td><td style='width:100%;background-color: #f1f1f1;border: 1pt solid #ccc; border-left-style: none'>"
+      result += select_tag :root_topics, options_for_select(['All'] + Topic.roots.collect{|topic| [topic.title, topic.id]}, (@media_category_association.nil? || @media_category_association.root.nil? ? 'All' : @media_category_association.root.id)), :onchange => "reinit(); if ( this.value == 'All') { $('#browse_link').hide()} else {$('#browse_link').show()}; $('#searcher_autocomplete').focus()", :style => 'font-size: 9pt'
+      result << "&nbsp; <a id='browse_link' href='#' style='font-size:9pt; display:none'>Browse</a>"
+      result <<	"</td></tr>"
+      result += "<tr><td> </td></tr>"
+    end
   end  
   
   def category_selector_old(main_category, instance_variable_name, field_name, includes = true)

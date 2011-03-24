@@ -1,5 +1,35 @@
 module TopicalMapCategoriesHelper
 
+  def category_fields( options = {} )
+    # options.subject       = name/image being associated with
+    # options.subject_label = label for subject (or code to put in that cell)
+    # options.f             = form object from block
+    # options.root          = topic to use as starting root
+    # options.varname       = instance variable name
+    # options.hastree       = whether we're starting with a tree or not (boolean string)
+    # options.labels        = string to use as label for string value annotation
+    # options.labeln        = string to use as label for numeric value annotation
+    
+    result = "
+      <tr>
+    		<td style='text-align: right; font-size:11pt;font-weight:bold;font-size:10pt;white-space:nowrap'>#{options[:subject_label]}</td>
+    		<td style=''>#{options[:subject]}</td>
+    	</tr>
+      #{topic_filter}
+  	  <tr id='characteristic-row'>
+  		  <td style='text-align:right;font-weight:bold'>Characteristic</td>
+    		<td>#{category_selector(options[:root], options[:varname], :category, :hasTree => options[:hastree], :singleSelectionTree => 'false')}</td>
+    	</tr>
+    	<tr class='annotation'>
+    		<td style='text-align:right;'>#{options[:labels]}</td>
+    		<td>#{options[:f].text_field :string_value, :style => 'padding:3px; width: 300px'}</td>
+    	</tr>
+    	<tr class='annotation'>
+    		<td style='text-align:right;'>#{options[:labeln]}</td>
+    		<td>#{options[:f].text_field :numeric_value, :style => 'padding:3px; width: 300px'}</td>
+    	</tr>"
+  end
+
   def category_selector_includes
     [javascript_include_tag('jquery.autocomplete', 'jquery.checktree', 'model-searcher', 'jquery.draggable.popup'), stylesheet_link_tag('jquery.autocomplete', 'jquery.checktree', 'jquery.draggable.popup')].join("\n")
   end

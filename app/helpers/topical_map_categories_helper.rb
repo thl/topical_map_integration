@@ -29,6 +29,16 @@ module TopicalMapCategoriesHelper
     		<td>#{options[:f].text_field :numeric_value, :style => 'padding:3px; width: 300px'}</td>
     	</tr>"
   end
+  
+  def category_form_table( options = {}, f = nil)
+      "<table id='mobj' border='0' cellspacing='0'>
+      	#{render :partial => options[:form_partial], :locals => {:f => f}}
+      	<tr>
+      		<td></td>
+      		<td>#{options[:footer]}</td>
+      	</tr>
+      </table>"
+  end
 
   def category_selector_includes
     [javascript_include_tag('jquery.autocomplete', 'jquery.checktree', 'model-searcher', 'jquery.draggable.popup'), stylesheet_link_tag('jquery.autocomplete', 'jquery.checktree', 'jquery.draggable.popup')].join("\n")

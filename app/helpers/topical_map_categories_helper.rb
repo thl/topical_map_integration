@@ -1,9 +1,8 @@
 module TopicalMapCategoriesHelper
 
-  def category_fields( options = {} )
+  def category_fields( options = {}, f = nil )
     # options.subject       = name/image being associated with
     # options.subject_label = label for subject (or code to put in that cell)
-    # options.f             = form object from block
     # options.root          = topic to use as starting root
     # options.varname       = instance variable name
     # options.hastree       = whether we're starting with a tree or not (boolean string)
@@ -22,17 +21,17 @@ module TopicalMapCategoriesHelper
     	</tr>
     	<tr class='annotation'>
     		<td style='text-align:right;'>#{options[:labels]}</td>
-    		<td>#{options[:f].text_field :string_value, :style => 'padding:3px; width: 300px'}</td>
+    		<td>#{f.text_field :string_value, :style => 'padding:3px; width: 300px'}</td>
     	</tr>
     	<tr class='annotation'>
     		<td style='text-align:right;'>#{options[:labeln]}</td>
-    		<td>#{options[:f].text_field :numeric_value, :style => 'padding:3px; width: 300px'}</td>
+    		<td>#{f.text_field :numeric_value, :style => 'padding:3px; width: 300px'}</td>
     	</tr>"
   end
   
-  def category_form_table( options = {}, f = nil)
+  def category_form_table( options = {})
       "<table id='mobj' border='0' cellspacing='0'>
-      	#{render :partial => options[:form_partial], :locals => {:f => f}}
+      	#{render :partial => options[:form_partial], :locals => options[:locals]}
       	<tr>
       		<td></td>
       		<td>#{options[:footer]}</td>

@@ -213,9 +213,9 @@ function ModelSearcher(){
 				);
 			}
 		}
-		that.hiddenIdInput[0].value += ',' + ids.join(',');
+		that.hiddenIdInput[0].value += (document.getElementById('root_topics') ? ',' : '') + ids.join(',');
 		$bRow.append(names.join(''));
-		that.autocompleteInput.val('');
+		if (document.getElementById('root_topics')) that.autocompleteInput.val('');
 		this.checkAnnotationState();
 	}
 	
@@ -253,7 +253,7 @@ function ModelSearcher(){
 		if(data){
 			thisModelSearcher.addValue([data.id])
 		}else{
-			//thisModelSearcher.hiddenIdInput.val('');
+			thisModelSearcher.hiddenIdInput.val('');
 		}
 		
 		//thisModelSearcher.treeNames.html('');
@@ -291,9 +291,14 @@ function ModelSearcher(){
 
 function reinit() {
 	var el = document.getElementById('root_topics'),
-		id = el.value,
-		label = el.options[el.selectedIndex].text,
 		searcher = undefined;
+		
+	if (el) {
+		var	id = el.value,
+			label = el.options[el.selectedIndex].text;
+	} else {
+		var id = label = '';
+	}
 
 	if ( id == 'All' ) {
 		all_searcher();

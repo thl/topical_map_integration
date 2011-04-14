@@ -261,7 +261,7 @@ function ModelSearcher(){
 		if(data){
 			thisModelSearcher.addValue([data.id])
 		}else{
-			thisModelSearcher.hiddenIdInput.val('');
+			//thisModelSearcher.hiddenIdInput.val('');
 		}
 		
 		//thisModelSearcher.treeNames.html('');

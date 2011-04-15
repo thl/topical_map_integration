@@ -19,7 +19,7 @@ function ModelSearcher(){
 	// The name, label, and style attributes of the hidden field in which the selected ID(s) will be entered
 	this.fieldName = "searcher_id_input";
 	this.fieldLabel = "";
-	this.fieldStyle = "padding:3px";
+	this.fieldStyle = "padding:3px; width: 161px";
 	
 	// Another method of adding objects (instead of using services)
 	this.objectList = null;
@@ -73,6 +73,13 @@ function ModelSearcher(){
 		if(typeof(options.proxy) != "undefined")				{ this.proxy = options.proxy; }
 		this.divId = divId;
 		this.div = jQuery('#'+divId);
+		if ( this.fieldLabel.indexOf('Feature Type') > -1 ) {
+			this.div.html(
+						(this.fieldLabel ? '<label for="'+this.fieldName+'">'+this.fieldLabel+'</label>' : '')+
+						'<input type="text" name="searcher_autocomplete" id="searcher_autocomplete" style="'+this.fieldStyle+'" />'+
+						'<input type="hidden" name="'+this.fieldName+'" id="searcher_id_input" />'
+					);
+		}
 		this.autocompleteInput = jQuery('#searcher_autocomplete');
 		this.hiddenIdInput = jQuery('#searcher_id_input');
 

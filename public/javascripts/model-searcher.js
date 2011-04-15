@@ -114,6 +114,36 @@ function ModelSearcher(){
 		if(this.hasTree){
 			this.treePopupId = this.divId+"_model_searcher_tree_popup";
 			this.treeLoading = this.div.find('.tree-loading');
+			if ( this.fieldLabel.indexOf('Feature Type') > -1 ) {
+				this.div.append('<br />Input type above or <a href="#" class="tree-link">select from tree</a>'+
+								'<span class="tree-names"></span> <a href="#" class="tree-remove">(remove)</a><span class="tree-loading" style="float:right;"></span>');
+				this.treeLink = this.div.find('.tree-link');
+				this.treeRemove = this.div.find('.tree-remove');
+				this.treeNames = this.div.find('.tree-names');
+				this.treeRemove.hide();
+				this.treeRemove.click(function(){
+					thisModelSearcher.treeNames.html('');
+					thisModelSearcher.treeRemove.hide();
+					thisModelSearcher.hiddenIdInput.val('');
+					return false;
+				});
+				this.treeLink.click(function(){
+					if(thisModelSearcher.treeLoaded){
+						jQuery('#'+thisModelSearcher.treePopupId).show();
+					}else{
+						thisModelSearcher.treeLoading.html(' <img src="../images/ajax-loader.gif" />');
+						jQuery.getJSON(thisModelSearcher.treeService, function(data){
+							thisModelSearcher.treeHtml = thisModelSearcher.createTreeFromArray(data.category ? data.category.categories : data.categories);
+							thisModelSearcher.loadPopup();
+							thisModelSearcher.treeHtml = null;
+							data = null;
+							thisModelSearcher.treeLoading.html('');
+							thisModelSearcher.treeLoaded = true;
+						});
+					}
+					return false;
+				});
+			}
 		}
 		
 		$tRem.unbind('click'); // this and below have to be separate because live can't be chained

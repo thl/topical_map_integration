@@ -128,9 +128,9 @@ function ModelSearcher(){
 					return false;
 				});
 				this.treeLink.click(function(){
-					// if(thisModelSearcher.treeLoaded){
-					// 					jQuery('#'+thisModelSearcher.treePopupId).show();
-					// 				}else{
+					if(thisModelSearcher.treeLoaded){
+	 					jQuery('#'+thisModelSearcher.treePopupId).show();
+	 				}else{
 						thisModelSearcher.treeLoading.html(' <img src="../images/ajax-loader.gif" />');
 						jQuery.getJSON(thisModelSearcher.treeService, function(data){
 							thisModelSearcher.treeHtml = thisModelSearcher.createTreeFromArray(data.category ? data.category.categories : data.categories);
@@ -140,7 +140,7 @@ function ModelSearcher(){
 							thisModelSearcher.treeLoading.html('');
 							thisModelSearcher.treeLoaded = true;
 						});
-					//}
+					}
 					return false;
 				});
 			}
@@ -222,14 +222,26 @@ function ModelSearcher(){
 		that.treePopup.div
 			.find('form:first').submit(function(){
 				var ids = [];
+				var names = [];
 
 				jQuery(this).find(':checkbox:checked').each(function(){
-					var label_name = jQuery(this).siblings('label').attr('name');
+					var $label = jQuery(this).siblings('label');
+					var label_name = $label.attr('name');
 					if(label_name.indexOf('record_') == 0){
 						ids.push(label_name.substring(7));
+						names.push($label.html());
 					}
 				});
-				if (ids.length) that.addValue( ids );
+				if (ids.length) {
+					if ( that.fieldLabel.indexOf('Feature Type') == -1 ) {
+						that.addValue( ids );
+					} else {
+						that.hiddenIdInput.val(ids.join(','));
+						that.autocompleteInput.val('');
+						that.treeNames.html(':<br />'+names.join(', '));
+						that.treeRemove.show();
+					}
+				}
 				jQuery('#'+that.treePopupId).hide();
 				return false;
 			});

@@ -128,9 +128,9 @@ function ModelSearcher(){
 					return false;
 				});
 				this.treeLink.click(function(){
-					if(thisModelSearcher.treeLoaded){
-						jQuery('#'+thisModelSearcher.treePopupId).show();
-					}else{
+					// if(thisModelSearcher.treeLoaded){
+					// 					jQuery('#'+thisModelSearcher.treePopupId).show();
+					// 				}else{
 						thisModelSearcher.treeLoading.html(' <img src="../images/ajax-loader.gif" />');
 						jQuery.getJSON(thisModelSearcher.treeService, function(data){
 							thisModelSearcher.treeHtml = thisModelSearcher.createTreeFromArray(data.category ? data.category.categories : data.categories);
@@ -140,7 +140,7 @@ function ModelSearcher(){
 							thisModelSearcher.treeLoading.html('');
 							thisModelSearcher.treeLoaded = true;
 						});
-					}
+					//}
 					return false;
 				});
 			}

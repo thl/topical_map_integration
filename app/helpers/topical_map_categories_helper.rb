@@ -1,3 +1,5 @@
+# TODO: This and the related model-searcher.js are a total mess. Completely reorganize to make more intuitive and cleaner. -jev3a 6/13/11
+
 module TopicalMapCategoriesHelper
 
   def category_fields( options = {}, f = nil )
@@ -6,30 +8,35 @@ module TopicalMapCategoriesHelper
     # options.root          = topic to use as starting root
     # options.varname       = instance variable name
     # options.hastree       = whether we're starting with a tree or not (boolean string)
-    # options.labels        = string to use as label for string value annotation
-    # options.labeln        = string to use as label for numeric value annotation
+    # [options.include_js]  = add link to files listed in category_selector_includes? defaults to true, set to false only when these files are already included in head
+    # [options.labels]      = string to use as label for string value annotation
+    # [options.labeln]      = string to use as label for numeric value annotation
     
     result = "
       <tr>
     		<td style='text-align: right; font-size:11pt;font-weight:bold;font-size:10pt;white-space:nowrap'>#{options[:subject_label]}</td>
     		<td style=''>#{options[:subject]}</td>
     	</tr>
-      #{topic_filter}
+      #{topic_filter( {:root_id => ( options[:root].nil? ? nil : options[:root].id ) } )}
   	  <tr id='characteristic-row'>
   		  <td style='text-align:right;font-weight:bold'>Characteristic</td>
-    		<td>#{category_selector(options[:root], options[:varname], :category, :hasTree => options[:hastree], :singleSelectionTree => 'false')}</td>
-    	</tr>
-    	<tr class='annotation'>
+    		<td>#{category_selector(options[:root], options[:varname], :category, :includes => (options[:include_js] || true), :hasTree => options[:hastree], :singleSelectionTree => 'false')}</td>
+    	</tr>"
+    	
+    	result << "<tr class='annotation'>
     		<td style='text-align:right;'>#{options[:labels]}</td>
     		<td>#{f.text_field :string_value, :style => 'padding:3px; width: 300px'}</td>
-    	</tr>
-    	<tr class='annotation'>
+    	</tr>" if options[:labels]
+    	
+    	result << "<tr class='annotation'>
     		<td style='text-align:right;'>#{options[:labeln]}</td>
     		<td>#{f.text_field :numeric_value, :style => 'padding:3px; width: 300px'}</td>
-    	</tr>"
+    	</tr>" if options[:labeln]
+    	
+    	result
   end
   
-  def category_form_table( options = {})
+  def category_form_table(options = {})
       "<table id='mobj' border='0' cellspacing='0'>
       	#{render :partial => options[:form_partial], :locals => options[:locals]}
       	<tr>
@@ -134,14 +141,17 @@ module TopicalMapCategoriesHelper
     return_str += val_field
   end
   
-  def topic_filter
+  def topic_filter( options = {} )
     unless params[:action] == 'edit'
-      result = "<tr><td> </td></tr>"
-      result << "<tr><td style='background-color: #f1f1f1;text-align: right; font-size:10pt;border: 1pt solid #ccc; border-right-style: none'>Topic Filter</td><td style='width:100%;background-color: #f1f1f1;border: 1pt solid #ccc; border-left-style: none'>"
-      result += select_tag :root_topics, options_for_select(['All'] + Topic.roots.collect{|topic| [topic.title, topic.id]}, (@media_category_association.nil? || @media_category_association.root.nil? ? 'All' : @media_category_association.root.id)), :onchange => "reinit(); if ( this.value == 'All') { $('#browse_link').hide()} else {$('#browse_link').show()}; $('#searcher_autocomplete').focus()", :style => 'font-size: 9pt'
-      result << "&nbsp; <a id='browse_link' href='#' style='font-size:9pt; display:none'>Browse</a>"
-      result <<	"</td></tr>"
-      result += "<tr><td> </td></tr>"
+      result = "<tr><td> </td></tr>
+                <tr><td style='background-color: #f1f1f1;text-align: right; font-size:10pt;border: 1pt solid #ccc; border-right-style: none'>Topic Filter</td><td style='width:100%;background-color: #f1f1f1;border: 1pt solid #ccc; border-left-style: none'>"
+
+      result += select_tag :root_topics, options_for_select(['All'] + Topic.roots.collect{|topic| [topic.title, topic.id]}, (options[:root_id].nil? ? 'All' : options[:root_id])), :onchange => "reinit(); if ( this.value == 'All') { $('#browse_link').hide()} else {$('#browse_link').show()}; $('#searcher_autocomplete').focus()", :style => 'font-size: 9pt'
+
+      result << "&nbsp; <a id='browse_link' href='#' style='font-size:9pt; display:none'>Browse</a></td></tr>
+                <tr><td> </td></tr>"
+                
+      result
     end
   end  
   

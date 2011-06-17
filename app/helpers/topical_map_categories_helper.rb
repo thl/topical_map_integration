@@ -8,32 +8,42 @@ module TopicalMapCategoriesHelper
     # options.root          = topic to use as starting root
     # options.varname       = instance variable name
     # options.hastree       = whether we're starting with a tree or not (boolean string)
+    # [options.selectable]    = show the topic select box (boolean, defaults to true)
+    # [options.fieldname]   = the name of the auto-complete, category-capturing field (defaults to :category)
     # [options.include_js]  = add link to files listed in category_selector_includes? defaults to true, set to false only when these files are already included in head
     # [options.labels]      = string to use as label for string value annotation
     # [options.labeln]      = string to use as label for numeric value annotation
+    
+    fieldname = options[:fieldname] || :category
+    options[:selectable] = true if options[:selectable].nil?
     
     result = "
       <tr>
     		<td style='text-align: right; font-size:11pt;font-weight:bold;font-size:10pt;white-space:nowrap'>#{options[:subject_label]}</td>
     		<td style=''>#{options[:subject]}</td>
-    	</tr>
-      #{topic_filter( {:root_id => ( options[:root].nil? ? nil : options[:root].id ) } )}
-  	  <tr id='characteristic-row'>
-  		  <td style='text-align:right;font-weight:bold'>Characteristic</td>
-    		<td>#{category_selector(options[:root], options[:varname], :category, :includes => (options[:include_js] || true), :hasTree => options[:hastree], :singleSelectionTree => 'false')}</td>
     	</tr>"
     	
-    	result << "<tr class='annotation'>
+    result << topic_filter( {:root_id => ( options[:root].nil? ? nil : options[:root].id ) } ) if options[:selectable]
+    
+  	result << "
+  	  <tr id='characteristic-row'>
+  		  <td style='text-align:right;font-weight:bold'>Category</td>
+    		<td>#{category_selector(options[:root], options[:varname], fieldname, :includes => (options[:include_js] || true), :hasTree => options[:hastree], :singleSelectionTree => 'false')}</td>
+    	</tr>"
+    	
+    result << "
+    	<tr class='annotation'>
     		<td style='text-align:right;'>#{options[:labels]}</td>
     		<td>#{f.text_field :string_value, :style => 'padding:3px; width: 300px'}</td>
     	</tr>" if options[:labels]
     	
-    	result << "<tr class='annotation'>
+    result << "
+      <tr class='annotation'>
     		<td style='text-align:right;'>#{options[:labeln]}</td>
     		<td>#{f.text_field :numeric_value, :style => 'padding:3px; width: 300px'}</td>
     	</tr>" if options[:labeln]
     	
-    	result
+    result
   end
   
   def category_form_table(options = {})

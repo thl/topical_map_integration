@@ -314,7 +314,7 @@ function ModelSearcher(){
 		}
 		
 		//thisModelSearcher.treeNames.html('');
-		// thisModelSearcher.treeRemove.hide();
+		//thisModelSearcher.treeRemove.hide();
 		return false;
 	};
 	
@@ -353,6 +353,9 @@ function reinit() {
 	if (el) {
 		var	id = el.value,
 			label = el.options[el.selectedIndex].text;
+	} else if (selected_root && selected_root != 'All') {
+		var id = selected_root;
+		selected_root = undefined
 	} else {
 		var id = label = '';
 	}

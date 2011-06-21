@@ -2,28 +2,27 @@
 
 module TopicalMapCategoriesHelper
 
-  def category_fields( options = {}, f = nil )
-    # options.subject       = name/image being associated with
-    # options.subject_label = label for subject (or code to put in that cell)
+  def category_fields( options = {} )
+    # options.subject       = hash of name/image being associated with, and label: { :display => 'name/img', :label => 'label' }
     # options.root          = topic to use as starting root
     # options.varname       = instance variable name
     # options.hastree       = whether we're starting with a tree or not (boolean string)
-    # [options.selectable]    = show the topic select box (boolean, defaults to true)
+    # [options.extrafields] = array of hashes like this [{:field => 'fieldname', :label => 'label'}, {:field => 'field2name', :label => 'label2'}, ...]
+    # [options.selectable]  = show the topic select box (boolean, defaults to true)
     # [options.fieldname]   = the name of the auto-complete, category-capturing field (defaults to :category)
     # [options.include_js]  = add link to files listed in category_selector_includes? defaults to true, set to false only when these files are already included in head
-    # [options.labels]      = string to use as label for string value annotation
-    # [options.labeln]      = string to use as label for numeric value annotation
     
+    subject = options[:subject]
     fieldname = options[:fieldname] || :category
     options[:selectable] = true if options[:selectable].nil?
     
     result = "
       <tr>
-    		<td style='text-align: right; font-size:11pt;font-weight:bold;font-size:10pt;white-space:nowrap'>#{options[:subject_label]}</td>
-    		<td style=''>#{options[:subject]}</td>
+    		<td style='text-align: right; font-size:11pt;font-weight:bold;font-size:10pt;white-space:nowrap'>#{subject[:label]}</td>
+    		<td style=''>#{subject[:display]}</td>
     	</tr>"
     	
-    result << topic_filter( {:root_id => ( options[:root].nil? ? nil : options[:root].id ) } ) if options[:selectable]
+    result << topic_filter({:root => options[:root]}) if options[:selectable]
     
   	result << "
   	  <tr id='characteristic-row'>
@@ -31,17 +30,15 @@ module TopicalMapCategoriesHelper
     		<td>#{category_selector(options[:root], options[:varname], fieldname, :includes => (options[:include_js] || true), :hasTree => options[:hastree], :singleSelectionTree => 'false')}</td>
     	</tr>"
     	
-    result << "
-    	<tr class='annotation'>
-    		<td style='text-align:right;'>#{options[:labels]}</td>
-    		<td>#{f.text_field :string_value, :style => 'padding:3px; width: 300px'}</td>
-    	</tr>" if options[:labels]
-    	
-    result << "
-      <tr class='annotation'>
-    		<td style='text-align:right;'>#{options[:labeln]}</td>
-    		<td>#{f.text_field :numeric_value, :style => 'padding:3px; width: 300px'}</td>
-    	</tr>" if options[:labeln]
+    unless options[:extrafields].nil?
+      options[:extrafields].each do |i|
+        result << "
+        	<tr class='annotation'>
+        		<td style='text-align:right;'>#{i[:label]}</td>
+        		<td>#{i[:field]}</td>
+        	</tr>"
+      end
+    end
     	
     result
   end
@@ -89,6 +86,7 @@ module TopicalMapCategoriesHelper
         		fieldName: '#{field_name}',
         		fieldLabel: '#{field_label}',
         		selectedObjects: [#{selected_object}]#{searcher_options},
+        		searcher: true,
         		proxy: '#{ActionController::Base.relative_url_root}/proxy_engine/utils/proxy/?proxy_url='
         	});
         });
@@ -153,10 +151,12 @@ module TopicalMapCategoriesHelper
   
   def topic_filter( options = {} )
     unless params[:action] == 'edit'
+      root = options[:root]
+      root = root.nil? ? Category.roots : root.children
       result = "<tr><td> </td></tr>
                 <tr><td style='background-color: #f1f1f1;text-align: right; font-size:10pt;border: 1pt solid #ccc; border-right-style: none'>Topic Filter</td><td style='width:100%;background-color: #f1f1f1;border: 1pt solid #ccc; border-left-style: none'>"
 
-      result += select_tag :root_topics, options_for_select(['All'] + Topic.roots.collect{|topic| [topic.title, topic.id]}, (options[:root_id].nil? ? 'All' : options[:root_id])), :onchange => "reinit(); if ( this.value == 'All') { $('#browse_link').hide()} else {$('#browse_link').show()}; $('#searcher_autocomplete').focus()", :style => 'font-size: 9pt'
+      result += select_tag :root_topics, options_for_select(['All'] + root.collect{|topic| [topic.title, topic.id]}, (options[:root].nil? ? 'All' : root.id)), :onchange => "reinit(); if ( this.value == 'All') { $('#browse_link').hide()} else {$('#browse_link').show()}; $('#searcher_autocomplete').focus()", :style => 'font-size: 9pt'
 
       result << "&nbsp; <a id='browse_link' href='#' style='font-size:9pt; display:none'>Browse</a></td></tr>
                 <tr><td> </td></tr>"

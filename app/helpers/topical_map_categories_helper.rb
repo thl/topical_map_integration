@@ -34,7 +34,7 @@ module TopicalMapCategoriesHelper
       options[:extrafields].each do |i|
         result << "
         	<tr class='annotation'>
-        		<td style='text-align:right;'>#{i[:label]}</td>
+        		<td style='text-align:right;white-space:nowrap'>#{i[:label]}</td>
         		<td>#{i[:field]}</td>
         	</tr>"
       end
@@ -154,7 +154,7 @@ module TopicalMapCategoriesHelper
       root = options[:root]
       root = root.nil? ? Category.roots : root.children
       result = "<tr><td> </td></tr>
-                <tr><td style='background-color: #f1f1f1;text-align: right; font-size:10pt;border: 1pt solid #ccc; border-right-style: none'>Topic Filter</td><td style='width:100%;background-color: #f1f1f1;border: 1pt solid #ccc; border-left-style: none'>"
+                <tr><td style='background-color: #f1f1f1;text-align: right; font-size:10pt;border: 1pt solid #ccc; border-right-style: none; white-space: nowrap'>Topic Filter</td><td style='width:100%;background-color: #f1f1f1;border: 1pt solid #ccc; border-left-style: none'>"
 
       result += select_tag :root_topics, options_for_select(['All'] + root.collect{|topic| [topic.title, topic.id]}, (options[:root].nil? ? 'All' : root.id)), :onchange => "reinit(); if ( this.value == 'All') { $('#browse_link').hide()} else {$('#browse_link').show()}; $('#searcher_autocomplete').focus()", :style => 'font-size: 9pt'
 

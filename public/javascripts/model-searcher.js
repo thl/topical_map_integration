@@ -17,7 +17,7 @@ function ModelSearcher(){
 	this.div = null;
 	
 	// The name, label, and style attributes of the hidden field in which the selected ID(s) will be entered
-	this.fieldName = "searcher_id_input";
+	this.hiddenFieldName = "searcher_id_input";
 	this.fieldLabel = "";
 	this.fieldStyle = "padding:3px; width: 161px";
 	
@@ -113,10 +113,10 @@ function ModelSearcher(){
 			this.div.html(
 						(this.fieldLabel ? '<label for="'+this.fieldName +'_' + this.varname + '">'+this.fieldLabel+'</label>' : '')+
 						'<input type="text" name="searcher_autocomplete" id="searcher_autocomplete_' + this.varname + '" style="'+this.fieldStyle+'" />'+
-						'<input type="hidden" name="'+this.fieldName+'" id="' + this.fieldName + '_' + this.varname + '" />');
+						'<input type="hidden" name="'+this.fieldName+'" id="' + this.hiddenFieldName + '_' + this.varname + '" />');
 		}
 		this.autocompleteInput = jQuery('#searcher_autocomplete_' + this.varname);
-		this.hiddenIdInput = jQuery(this.fieldName + '_' + this.varname);
+		this.hiddenIdInput = jQuery('#' + this.hiddenFieldName + '_' + this.varname);
 
 		// Request the service through a proxy if it's not local
 		if(this.listService.substr(0,4) == 'http'){

@@ -4,7 +4,7 @@ module TopicalMapCategoriesHelper
 
   def category_fields( options = {} )
     # options.subject       = hash of name/image being associated with, and label: { :display => 'name/img', :label => 'label' }
-    # options.root          = topic to use as starting root
+    # options.root          = category to use as starting root
     # options.varname       = instance variable name
     # options.hastree       = whether we're starting with a tree or not (boolean string)
     # [options.extrafields] = array of hashes like this [{:field => 'fieldname', :label => 'label'}, {:field => 'field2name', :label => 'label2'}, ...]
@@ -15,6 +15,7 @@ module TopicalMapCategoriesHelper
     subject = options[:subject]
     fieldname = options[:fieldname] || :category
     options[:selectable] = true if options[:selectable].nil?
+    unique_id = "#{options[:varname].to_s}_#{fieldname.to_s}".gsub(/[^\w_]/, '')
     
     result = "
       <tr>
@@ -22,12 +23,12 @@ module TopicalMapCategoriesHelper
     		<td style=''>#{subject[:display]}</td>
     	</tr>"
     	
-    result << topic_filter({:root => options[:root]}) if options[:selectable]
+    result << topic_filter({:root => options[:root], :unique_id => unique_id}) if options[:selectable]
     
   	result << "
-  	  <tr id='characteristic-row'>
+  	  <tr id='#{unique_id}_characteristic-row'>
   		  <td style='text-align:right;font-weight:bold'>Category</td>
-    		<td>#{category_selector(options[:root], options[:varname], fieldname, :includes => (options[:include_js] || true), :hasTree => options[:hastree], :singleSelectionTree => 'false')}</td>
+    		<td>#{category_selector(unique_id, options[:root], options[:varname], fieldname, :includes => (options[:include_js] || true), :hasTree => options[:hastree], :singleSelectionTree => 'false')}</td>
     	</tr>"
     	
     unless options[:extrafields].nil?
@@ -44,7 +45,7 @@ module TopicalMapCategoriesHelper
   end
   
   def category_form_table(options = {})
-      "<table id='mobj' border='0' cellspacing='0'>
+      "<table class='mobj' border='0' cellspacing='0'>
       	#{render :partial => options[:form_partial], :locals => options[:locals]}
       	<tr>
       		<td></td>
@@ -98,13 +99,20 @@ module TopicalMapCategoriesHelper
     return_str
   end
   
-  def category_selector(main_category, instance_variable_name, field_name, includes = true, options = {})
+  def category_selector(unique_id, main_category, instance_variable_name, field_name, includes = true, options = {})
+    ivn_s = instance_variable_name.to_s
+
+    # Create a unique name for the JS variable that will hold the ModelSearcher object.
+    js_variable_name = "#{unique_id}"
+    # The variable holding the ModelSearcher needs to be defined outside of jQuery(document).ready(), so that it
+    # has global scope and can be accessed by other JavaScript if need be.
+
     return_str = includes ? category_selector_includes : ''
-    div_id = "#{instance_variable_name.to_s}_#{field_name.to_s}_tmb_category_selector"
-    selected_category = instance_variable_get("@#{instance_variable_name.to_s}").send(field_name)
+    div_id = "#{unique_id}_tmb_category_selector"
+    selected_category = instance_variable_get("@#{ivn_s}").send(field_name)
     selected_object = selected_category.nil? ? "''" : "{id: '#{selected_category.id}', name: '#{escape_javascript(selected_category.title)}'}"
-    field_name = instance_variable_name.to_s+'['+field_name.to_s+'_id]'
-    return_str += "<input type='hidden' name=\"#{field_name}\" id='searcher_id_input' />"
+    field_name = ivn_s + '[' + field_name.to_s + '_id]'
+    return_str += "<input type='hidden' name=\"#{field_name}\" id='searcher_id_input_#{unique_id}' />"
     if main_category.nil?
       options[:hasTree] = 'false'
       selected_root = 'All'
@@ -115,48 +123,43 @@ module TopicalMapCategoriesHelper
     if !options.empty?
       searcher_options = ', '+options.collect{|option, value| "#{option}: #{escape_javascript(value)}" }.join(', ')
     end
-    # Create a unique name for the JS variable that will hold the ModelSearcher object.
-    js_variable_name = "ms_#{instance_variable_name.to_s}_#{field_name.to_s}".gsub(/[^\w_]/, '')
-    # The variable holding the ModelSearcher needs to be defined outside of jQuery(document).ready(), so that it
-    # has global scope and can be accessed by other JavaScript if need be.
+
     return_str += "
       <script type=\"text/javascript\">
-        var #{js_variable_name},
-            list_url = \"#{Category.get_url_template(:list, :format => 'json')}\",
-            all_url = \"#{Category.get_url_template(:all, :format => 'json')}\",
-            var_name = \"#{js_variable_name}\",
-            tmb_div = \"#{div_id}\",
-            selected_root = \"#{selected_root}\",
-            tmb_options = {
+        var #{js_variable_name} = new ModelSearcher(),
+            #{js_variable_name}_tmb_options = {
+              varname: '#{js_variable_name}',
+              selectedRoot: '#{selected_root}',
               fieldName: '#{field_name}',
           		fieldLabel: '',
           		selectedObjects: [#{selected_object}]#{searcher_options},
-          		proxy: '#{ActionController::Base.relative_url_root}/proxy_engine/utils/proxy/?proxy_url='
+          		proxy: '#{ActionController::Base.relative_url_root}/proxy_engine/utils/proxy/?proxy_url=',
+          		list_url_root: '#{Category.get_url(:list, :format => 'json')}',
+              all_url_root: '#{Category.get_url(:all, :format => 'json')}',
+              list_url_topic: '#{Category.get_url_template(:list, :format => 'json')}',
+              all_url_topic: '#{Category.get_url_template(:all, :format => 'json')}'
           	};
-        function all_searcher() {  
-              searcher = new ModelSearcher();
-            	searcher.init('#{div_id}', '#{Category.get_url(:list, :format => 'json')}', '#{Category.get_url(:all, :format => 'json')}', tmb_options );
-        }
+
         jQuery(document).ready(function(){
-          if ( selected_root != 'All' ) {
-            reinit();
-          } else {
-            all_searcher();
-          }
+          #{js_variable_name}.reinit(\"#{div_id}\", #{js_variable_name}_tmb_options);
         });
       </script>"
-    val_field = params[:action] == 'edit' ? selected_category.title : "<input type='text' name='searcher_autocomplete' id='searcher_autocomplete' style='padding:3px;width: 300px;' autofocus /><span id=\"#{div_id}\"></span>"
+    val_field = params[:action] == 'edit' ? selected_category.title : "<input type='text' name='searcher_autocomplete' id='searcher_autocomplete_#{unique_id}' style='padding:3px;width: 300px;' autofocus />"
     return_str += val_field
   end
   
   def topic_filter( options = {} )
+    # [options.root]  = node whose children will be displayed in the select box. defaults to all
+    
     unless params[:action] == 'edit'
-      root = options[:root]
-      root = root.nil? ? Category.roots : root.children
-      result = "<tr><td> </td></tr>
-                <tr><td style='background-color: #f1f1f1;text-align: right; font-size:10pt;border: 1pt solid #ccc; border-right-style: none; white-space: nowrap'>Topic Filter</td><td style='width:100%;background-color: #f1f1f1;border: 1pt solid #ccc; border-left-style: none'>"
+      cats = options[:root].nil? ? Category.roots : options[:root].children
+      unique_id = options[:unique_id]
+      div_id = "#{unique_id}_tmb_category_selector" # this is also in category_selector; need to consolidate
 
-      result += select_tag :root_topics, options_for_select(['All'] + root.collect{|topic| [topic.title, topic.id]}, (options[:root].nil? ? 'All' : root.id)), :onchange => "reinit(); if ( this.value == 'All') { $('#browse_link').hide()} else {$('#browse_link').show()}; $('#searcher_autocomplete').focus()", :style => 'font-size: 9pt'
+      result = "<tr><td> </td></tr>
+                <tr><td style='background-color: #f1f1f1;text-align: right; font-size:10pt;border: 1pt solid #ccc; border-right-style: none; white-space: nowrap'>Category Filter</td><td style='width:100%;background-color: #f1f1f1;border: 1pt solid #ccc; border-left-style: none'>"
+
+      result += select_tag :root_topics, options_for_select(['All'] + cats.collect{|cat| [cat.title, cat.id]}, (options[:root].nil? ? 'All' : options[:root].id)), :onchange => "#{unique_id}.reinit(\"#{div_id}\", tmb_options); if ( this.value == 'All') { $('#browse_link_#{unique_id}').hide()} else {$('#browse_link_#{unique_id}').show()}; $('#searcher_autocomplete_#{unique_id}').focus()", :style => 'font-size: 9pt'
 
       result << "&nbsp; <a id='browse_link' href='#' style='font-size:9pt; display:none'>Browse</a></td></tr>
                 <tr><td> </td></tr>"

@@ -41,6 +41,7 @@ function ModelSearcher(){
 	
 	// ID of category to use as starting point for topic filter and/or auto-complete
 	this.selectedRoot = null;
+	this.selectedRootOriginal = null;
 	
 	// Whether the user can select only one category from the tree (if present) or select multiple categories
 	this.singleSelectionTree = false;
@@ -65,8 +66,10 @@ function ModelSearcher(){
 			selectedRoot = options['selectedRoot'],
 			varname = options['varname'],
 			listService, treeService;
+			
+		if ( !this.selectedRootOriginal ) this.selectedRootOriginal = selectedRoot;
 
-		if (el) {
+		if (!selectedRoot) {
 			var	id = el.value,
 				label = el.options[el.selectedIndex].text;
 		} else if (selectedRoot && selectedRoot != 'All') {
@@ -85,7 +88,7 @@ function ModelSearcher(){
 			treeService = options['all_url_root'];
 		}
 
-		window[varname].init( divId, listService, treeService, options);
+		window[varname].init(divId, listService, treeService, options);
 	};
 	
 	this.init = function(divId, listService, treeService, options){
@@ -146,6 +149,7 @@ function ModelSearcher(){
 			this.autocompleteInput.val(this.selectedObjects[0].name);
 			this.hiddenIdInput.val(this.selectedObjects[0].id);
 		}
+
 		if(this.hasTree){
 			this.treePopupId = this.varname + "_model_searcher_tree_popup";
 			this.treeLoading = this.div.find('.tree-loading');
@@ -182,8 +186,8 @@ function ModelSearcher(){
 			}
 		}
 		
-		this.tRem.unbind('click'); // this and below have to be separate because live can't be chained
-		this.tRem.live('click', function(){
+		jQuery('.tree-remove', this.div).unbind('click'); // this and below have to be separate because live can't be chained
+		jQuery('#content-main').delegate('#' + this.divId + ' .tree-remove', 'click', function(){
 			var $selection = jQuery(this).closest('.tree-names'),
 				$target = $selection.siblings().length ? $selection : $selection.closest('tr');
 			

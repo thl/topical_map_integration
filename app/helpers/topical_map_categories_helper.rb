@@ -6,7 +6,7 @@ module TopicalMapCategoriesHelper
     # options.subject       = hash of name/image being associated with, and label: { :display => 'name/img', :label => 'label' }
     # options.root          = category to use as starting root
     # options.varname       = instance variable name
-    # options.hastree       = whether we're starting with a tree or not (boolean string)
+    # [options.singleSelectionTree] = whether trees can have multiple nodes selected or not (boolean, defaults to false)
     # [options.extrafields] = array of hashes like this [{:field => 'fieldname', :label => 'label'}, {:field => 'field2name', :label => 'label2'}, ...]
     # [options.selectable]  = show the topic select box (boolean, defaults to true)
     # [options.fieldname]   = the name of the auto-complete, category-capturing field (defaults to :category)
@@ -14,6 +14,7 @@ module TopicalMapCategoriesHelper
     
     subject = options[:subject]
     fieldname = options[:fieldname] || :category
+    options[:singleSelectionTree] = false if options[:singleSelectionTree].nil?
     options[:selectable] = true if options[:selectable].nil?
     options[:include_js] = true if options[:include_js].nil?
     unique_id = "#{options[:varname].to_s}_#{fieldname.to_s}".gsub(/[^\w_]/, '')
@@ -29,7 +30,7 @@ module TopicalMapCategoriesHelper
   	result << "
   	  <tr id='#{unique_id}_characteristic-row'>
   		  <td style='text-align:right;font-weight:bold'>Category</td>
-    		<td>#{category_selector(unique_id, options[:root], options[:varname], fieldname, :includes => options[:include_js], :hasTree => options[:hastree], :singleSelectionTree => 'false')}</td>
+    		<td>#{category_selector(unique_id, options[:root], options[:varname], fieldname, :includes => options[:include_js], :singleSelectionTree => options[:singleSelectionTree])}</td>
     	</tr>"
     	
     unless options[:extrafields].nil?
@@ -100,7 +101,7 @@ module TopicalMapCategoriesHelper
     return_str
   end
   
-  def category_selector(unique_id, main_category, instance_variable_name, field_name, includes = true, options = {})
+  def category_selector(unique_id, main_category, instance_variable_name, field_name, includes = true, singleSelectionTree )
     ivn_s = instance_variable_name.to_s
 
     # Create a unique name for the JS variable that will hold the ModelSearcher object.
@@ -129,6 +130,7 @@ module TopicalMapCategoriesHelper
       <script type=\"text/javascript\">
         var #{js_variable_name} = new ModelSearcher(),
             #{js_variable_name}_tmb_options = {
+              singleSelectionTree: '#{singleSelectionTree}',
               varname: '#{js_variable_name}',
               selectedRoot: '#{selected_root}',
               fieldName: '#{field_name}',

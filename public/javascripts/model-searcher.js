@@ -110,11 +110,12 @@ function ModelSearcher(){
 		if(typeof(options.singleSelectionTree) != "undefined")	{ this.singleSelectionTree = options.singleSelectionTree; }
 		if(typeof(options.proxy) != "undefined")				{ this.proxy = options.proxy; }
 		this.divId = divId;
-		this.div = div.length ? div : jQuery('tr[id^=' + this.varname + ']').first().closest('.mobj').wrap('<div />').parent().attr('id',this.divId);
-		this.tRem = jQuery('.tree-remove', this.div);
+		this.table = jQuery('tr[id^=' + this.varname + ']').first().closest('.mobj');
+		this.div = div.length ? div : this.table.wrap('<div />').parent().attr('id',this.divId);
+
 		if ( this.fieldLabel.indexOf('Feature Type') > -1 ) {
 			this.div.html(
-						(this.fieldLabel ? '<label for="'+this.fieldName +'_' + this.varname + '">'+this.fieldLabel+'</label>' : '')+
+						(this.fieldLabel ? '<label for="'+this.fieldName +'_' + this.varname + '">'+this.fieldLabel+'</label>' : '') +
 						'<input type="text" name="searcher_autocomplete" id="searcher_autocomplete_' + this.varname + '" style="'+this.fieldStyle+'" />'+
 						'<input type="hidden" name="'+this.fieldName+'" id="' + this.hiddenFieldName + '_' + this.varname + '" />');
 		}
@@ -187,7 +188,7 @@ function ModelSearcher(){
 		}
 		
 		jQuery('.tree-remove', this.div).unbind('click'); // this and below have to be separate because live can't be chained
-		jQuery('#content-main').delegate('#' + this.divId + ' .tree-remove', 'click', function(){
+		this.table.delegate('#' + this.divId + ' .tree-remove', 'click', function(){
 			var $selection = jQuery(this).closest('.tree-names'),
 				$target = $selection.siblings().length ? $selection : $selection.closest('tr');
 			

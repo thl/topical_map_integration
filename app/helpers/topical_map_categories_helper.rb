@@ -115,12 +115,7 @@ module TopicalMapCategoriesHelper
     selected_object = selected_category.nil? ? "''" : "{id: '#{selected_category.id}', name: '#{escape_javascript(selected_category.title)}'}"
     field_name = ivn_s + '[' + field_name.to_s + '_id]'
     return_str += "<input type='hidden' name=\"#{field_name}\" id='searcher_id_input_#{unique_id}' />"
-    if main_category.nil?
-      options[:hasTree] = 'false'
-      selected_root = 'All'
-    else
-      selected_root = main_category.id
-    end
+    selected_root = main_category.nil? ? 'All' : main_category.id
 
     return_str += "
       <script type=\"text/javascript\">

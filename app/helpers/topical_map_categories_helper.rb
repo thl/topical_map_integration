@@ -121,10 +121,6 @@ module TopicalMapCategoriesHelper
     else
       selected_root = main_category.id
     end
-    searcher_options = ''
-    if !options.empty?
-      searcher_options = ', '+options.collect{|option, value| "#{option}: #{escape_javascript(value)}" }.join(', ')
-    end
 
     return_str += "
       <script type=\"text/javascript\">
@@ -135,7 +131,6 @@ module TopicalMapCategoriesHelper
               selectedRoot: '#{selected_root}',
               fieldName: '#{field_name}',
           		fieldLabel: '',
-          		selectedObjects: [#{selected_object}]#{searcher_options},
           		proxy: '#{ActionController::Base.relative_url_root}/proxy_engine/utils/proxy/?proxy_url=',
           		list_url_root: '#{Category.get_url(:list, :format => 'json')}',
               all_url_root: '#{Category.get_url(:all, :format => 'json')}',

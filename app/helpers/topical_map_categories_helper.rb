@@ -30,7 +30,7 @@ module TopicalMapCategoriesHelper
   	result << "
   	  <tr id='#{unique_id}_characteristic-row'>
   		  <td style='text-align:right;font-weight:bold'>Category</td>
-    		<td>#{category_selector(unique_id, options[:root], options[:varname], fieldname, :includes => options[:include_js], :singleSelectionTree => options[:singleSelectionTree])}</td>
+    		<td>#{category_selector(unique_id, options[:root], options[:varname], fieldname, options[:include_js], options[:singleSelectionTree])}</td>
     	</tr>"
     	
     unless options[:extrafields].nil?

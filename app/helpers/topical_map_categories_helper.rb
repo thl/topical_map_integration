@@ -101,7 +101,7 @@ module TopicalMapCategoriesHelper
     return_str
   end
   
-  def category_selector(unique_id, main_category, instance_variable_name, field_name, includes = true, singleSelectionTree )
+  def category_selector(unique_id, main_category, instance_variable_name, field_name, includes, singleSelectionTree )
     ivn_s = instance_variable_name.to_s
 
     # Create a unique name for the JS variable that will hold the ModelSearcher object.

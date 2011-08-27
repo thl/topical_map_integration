@@ -11,35 +11,25 @@ module TopicalMapCategoriesHelper
     # [options.selectable]  = show the topic select box (boolean, defaults to true)
     # [options.fieldname]   = the name of the auto-complete, category-capturing field (defaults to :category)
     # [options.include_js]  = add link to files listed in category_selector_includes? defaults to true, set to false only when these files are already included in head
+    # [options.include_styles]  = add link to files listed in category_selector_include_stylesheets? defaults to true, set to false when these files are already included in head or where included in a previous call to category_fields
     
     subject = options[:subject]
     fieldname = options[:fieldname] || :category
     options[:singleSelectionTree] = false if options[:singleSelectionTree].nil?
     options[:selectable] = true if options[:selectable].nil?
     options[:include_js] = true if options[:include_js].nil?
+    options[:include_styles] = true if options[:include_styles].nil?
     unique_id = "#{options[:varname].to_s}_#{fieldname.to_s}".gsub(/[^\w_]/, '')
-    
-    result = "
-      <tr>
-    		<td style='text-align: right; font-size:11pt;font-weight:bold;font-size:10pt;white-space:nowrap'>#{subject[:label]}</td>
-    		<td style=''>#{subject[:display]}</td>
-    	</tr>"
-    	
-    result << topic_filter({:root => options[:root], :unique_id => unique_id}) if options[:selectable]
-    
-  	result << "
-  	  <tr id='#{unique_id}_characteristic-row'>
-  		  <td style='text-align:right;font-weight:bold'>Category</td>
-    		<td>#{category_selector(unique_id, options[:root], options[:varname], fieldname, options[:include_js], options[:singleSelectionTree])}</td>
-    	</tr>"
-    	
+    result = "<tr><td style='text-align: right; font-size:11pt;font-weight:bold;font-size:10pt;white-space:nowrap'>#{subject[:label]}</td>\n"
+    result << "<td style=''>#{subject[:display]}</td></tr>\n"
+    result << topic_filter(:root => options[:root], :unique_id => unique_id) if options[:selectable]
+    result << "<tr id='#{unique_id}_characteristic-row'><td style='text-align:right;font-weight:bold'>Category</td>\n"
+    result << "<td>#{category_selector(unique_id, fieldname, options)}</td></tr>"
+
     unless options[:extrafields].nil?
       options[:extrafields].each do |i|
-        result << "
-        	<tr class='annotation'>
-        		<td style='text-align:right;white-space:nowrap'>#{i[:label]}</td>
-        		<td>#{i[:field]}</td>
-        	</tr>"
+        result << "<tr class='annotation'><td style='text-align:right;white-space:nowrap'>#{i[:label]}</td>\n"
+        result << "<td>#{i[:field]}</td></tr>"
       end
     end
     	
@@ -56,8 +46,12 @@ module TopicalMapCategoriesHelper
       </table>"
   end
 
+  def category_selector_include_styles
+    stylesheet_link_tag('jquery.autocomplete', 'jquery.checktree', 'jquery.draggable.popup')
+  end
+
   def category_selector_includes
-    [javascript_include_tag('jquery.autocomplete', 'jquery.checktree', 'model-searcher', 'jquery.draggable.popup'), stylesheet_link_tag('jquery.autocomplete', 'jquery.checktree', 'jquery.draggable.popup')].join("\n")
+    javascript_include_tag('jquery.autocomplete', 'jquery.checktree', 'model-searcher', 'jquery.draggable.popup')
   end
 
   def category_selector_includes_old
@@ -65,7 +59,11 @@ module TopicalMapCategoriesHelper
   end
   
   def category_searcher(includes = true, options = {})
-    return_str = includes ? category_selector_includes : ''
+    return_str = ''
+    if includes
+      return_str << category_selector_include_styles
+      return_str << category_selector_includes
+    end
     selected_object = "''"
     category_id = options[:category_id]
     field_name = options[:field_name]
@@ -101,27 +99,31 @@ module TopicalMapCategoriesHelper
     return_str
   end
   
-  def category_selector(unique_id, main_category, instance_variable_name, field_name, includes, singleSelectionTree )
-    ivn_s = instance_variable_name.to_s
+  # Required options: options[:varname], options[:singleSelectionTree]
+  # Optional: options[:root], options[:include_js]
+  def category_selector(unique_id, field_name, options)
+    ivn_s = options[:varname].to_s
 
     # Create a unique name for the JS variable that will hold the ModelSearcher object.
     js_variable_name = "#{unique_id}"
     # The variable holding the ModelSearcher needs to be defined outside of jQuery(document).ready(), so that it
     # has global scope and can be accessed by other JavaScript if need be.
 
-    return_str = includes ? category_selector_includes : ''
+    return_str = options[:include_js] ? category_selector_includes : ''
+    return_str << category_selector_include_styles if options[:include_styles]
+    
     div_id = "#{unique_id}_tmb_category_selector"
     selected_category = instance_variable_get("@#{ivn_s}").send(field_name)
     selected_object = selected_category.nil? ? "''" : "{id: '#{selected_category.id}', name: '#{escape_javascript(selected_category.title)}'}"
     field_name = ivn_s + '[' + field_name.to_s + '_id]'
-    return_str += "<input type='hidden' name=\"#{field_name}\" id='searcher_id_input_#{unique_id}' />"
-    selected_root = main_category.nil? ? 'All' : main_category.id
+    return_str += "<input type='hidden' name=\"#{field_name}\" id='searcher_id_input_#{unique_id}' value=\"#{selected_category.nil? ? '' : selected_category.id }\" />"
+    selected_root = options[:root].nil? ? 'All' : options[:root].id
 
     return_str += "
       <script type=\"text/javascript\">
         var #{js_variable_name} = new ModelSearcher(),
             #{js_variable_name}_tmb_options = {
-              singleSelectionTree: '#{singleSelectionTree}',
+              singleSelectionTree: '#{options[:singleSelectionTree]}',
               varname: '#{js_variable_name}',
               selectedRoot: '#{selected_root}',
               fieldName: '#{field_name}',
@@ -146,28 +148,22 @@ module TopicalMapCategoriesHelper
   def topic_filter( options = {} )
     # options.unique_id = unique identifier for this select box and for referring to js controller scripts
     # [options.root]  = node whose children will be displayed in the select box. defaults to all
-    
-    unless params[:action] == 'edit'
-      cats = options[:root].nil? ? Category.roots : options[:root].children
-      unique_id = options[:unique_id]
-      div_id = "#{unique_id}_tmb_category_selector" # this is also in category_selector; need to consolidate
-
-      result = "<tr><td> </td></tr>
-                <tr><td style='background-color: #f1f1f1;text-align: right; font-size:10pt;border: 1pt solid #ccc; border-right-style: none; white-space: nowrap'>Category Filter</td><td style='width:100%;background-color: #f1f1f1;border: 1pt solid #ccc; border-left-style: none'>"
-
-      result += select_tag :root_topics, options_for_select(['All'] + cats.collect{|cat| [cat.title, cat.id]}, (options[:root].nil? ? 'All' : options[:root].id)), :onchange => "#{unique_id}_tmb_options.selectedRoot = this.value; #{unique_id}.reinit(\"#{div_id}\", #{unique_id}_tmb_options); if ( this.value == 'All') { $('#browse_link_#{unique_id}').hide()} else {$('#browse_link_#{unique_id}').show()}; $('#searcher_autocomplete_#{unique_id}').focus()", :style => 'font-size: 9pt'
-
-      result << "&nbsp; <a id='browse_link_#{unique_id}' href='#' style='font-size:9pt; display:none'>Browse</a></td></tr>
-                <tr><td> </td></tr>"
-                
-      result
-    end
+    return '' if params[:action] == 'edit'
+    cats = options[:root].nil? ? Category.roots : options[:root].children
+    unique_id = options[:unique_id]
+    div_id = "#{unique_id}_tmb_category_selector" # this is also in category_selector; need to consolidate
+    result = '<tr><td> </td></tr>'
+    result << "\n<tr><td style='background-color: #f1f1f1;text-align: right; font-size:10pt;border: 1pt solid #ccc; border-right-style: none; white-space: nowrap'>Category Filter</td><td style='width:100%;background-color: #f1f1f1;border: 1pt solid #ccc; border-left-style: none'>"
+    result << select_tag(:root_topics, options_for_select(['All'] + cats.collect{|cat| [cat.title, cat.id]}, (options[:root].nil? ? 'All' : options[:root].id)), :onchange => "#{unique_id}_tmb_options.selectedRoot = this.value; #{unique_id}.reinit(\"#{div_id}\", #{unique_id}_tmb_options); if ( this.value == 'All') { $('#browse_link_#{unique_id}').hide()} else {$('#browse_link_#{unique_id}').show()}; $('#searcher_autocomplete_#{unique_id}').focus()", :style => 'font-size: 9pt')
+    result << "&nbsp; <a id='browse_link_#{unique_id}' href='#' style='font-size:9pt; display:none'>Browse</a></td></tr>\n"
+    result << '<tr><td> </td></tr>'
+    result
   end  
   
   def category_selector_old(main_category, instance_variable_name, field_name, includes = true)
     tag_prefix = "#{instance_variable_name}_#{field_name}"
     selected_category = instance_variable_get("@#{instance_variable_name.to_s}").send(field_name)
-    return_str = includes ? category_selector_includes : ''
+    return_str = includes ? category_selector_includes_old : ''
     return_str += "<span id=\"#{tag_prefix}_name\">"
     options = { :modal => true } #:height => 300, :width => 300}
     if selected_category.nil?

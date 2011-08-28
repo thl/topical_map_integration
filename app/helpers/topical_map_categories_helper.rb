@@ -114,9 +114,9 @@ module TopicalMapCategoriesHelper
     
     div_id = "#{unique_id}_tmb_category_selector"
     selected_category = instance_variable_get("@#{ivn_s}").send(field_name)
-    selected_object = selected_category.nil? ? "''" : "{id: '#{selected_category.id}', name: '#{escape_javascript(selected_category.title)}'}"
+    selected_object = selected_category.blank? || selected_category.instance_of?(Array) ? "''" : "{id: '#{selected_category.id}', name: '#{escape_javascript(selected_category.title)}'}"
     field_name = ivn_s + '[' + field_name.to_s + '_id]'
-    return_str += "<input type='hidden' name=\"#{field_name}\" id='searcher_id_input_#{unique_id}' value=\"#{selected_category.nil? ? '' : selected_category.id }\" />"
+    return_str += "<input type='hidden' name=\"#{field_name}\" id='searcher_id_input_#{unique_id}' value=\"#{selected_category.blank? ? '' : selected_category.id }\" />"
     selected_root = options[:root].nil? ? 'All' : options[:root].id
 
     return_str += "
@@ -139,16 +139,19 @@ module TopicalMapCategoriesHelper
           #{js_variable_name}.reinit(\"#{div_id}\", #{js_variable_name}_tmb_options);
         });
       </script>"
-    val_field = params[:action] == 'edit' ? selected_category.title : "<input type='text' name='searcher_autocomplete' id='searcher_autocomplete_#{unique_id}' style='padding:3px;width: 300px;' autofocus />"
+    if selected_category.blank?
+      val_field = "<input type='text' name='searcher_autocomplete' id='searcher_autocomplete_#{unique_id}' style='padding:3px;width: 300px;' autofocus />"      
+    else
+      val_field = selected_category.instance_of?(Array) ? '-' : selected_category.title
+    end
     return_str += val_field
-    
     return_str
   end
   
+  # options.unique_id = unique identifier for this select box and for referring to js controller scripts
+  # [options.root]  = node whose children will be displayed in the select box. defaults to all
   def topic_filter( options = {} )
-    # options.unique_id = unique identifier for this select box and for referring to js controller scripts
-    # [options.root]  = node whose children will be displayed in the select box. defaults to all
-    return '' if params[:action] == 'edit'
+    # return '' if params[:action] == 'edit'
     cats = options[:root].nil? ? Category.roots : options[:root].children
     unique_id = options[:unique_id]
     div_id = "#{unique_id}_tmb_category_selector" # this is also in category_selector; need to consolidate

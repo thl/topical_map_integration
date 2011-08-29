@@ -139,9 +139,8 @@ module TopicalMapCategoriesHelper
           #{js_variable_name}.reinit(\"#{div_id}\", #{js_variable_name}_tmb_options);
         });
       </script>"
-    val_field = params[:action] == 'edit' ? selected_category.title : "<input type='text' name='searcher_autocomplete' id='searcher_autocomplete_#{unique_id}' style='padding:3px;width: 300px;' autofocus />"
     #if selected_category.blank?
-    #  val_field = "<input type='text' name='searcher_autocomplete' id='searcher_autocomplete_#{unique_id}' style='padding:3px;width: 300px;' autofocus />"      
+      val_field = "<input type='text' name='searcher_autocomplete' id='searcher_autocomplete_#{unique_id}' style='padding:3px;width: 300px;' autofocus />"      
     #else
     #  val_field = selected_category.instance_of?(Array) ? '-' : selected_category.title
     #end

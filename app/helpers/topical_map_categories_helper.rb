@@ -6,33 +6,66 @@ module TopicalMapCategoriesHelper
     # options.subject       = hash of name/image being associated with, and label: { :display => 'name/img', :label => 'label' }
     # options.root          = category to use as starting root
     # options.varname       = instance variable name
-    # [options.singleSelectionTree] = whether trees can have multiple nodes selected or not (boolean, defaults to false)
-    # [options.extrafields] = array of hashes like this [{:field => 'fieldname', :label => 'label'}, {:field => 'field2name', :label => 'label2'}, ...]
+    # [options.single_selection] = whether one can select multiple items or just a single item (boolean, defaults to false)
+    # [options.extra_fields] = array of hashes like this [{:field => 'fieldname', :label => 'label'}, {:field => 'field2name', :label => 'label2'}, ...]
     # [options.selectable]  = show the topic select box (boolean, defaults to true)
-    # [options.fieldname]   = the name of the auto-complete, category-capturing field (defaults to :category)
+    # [options.field_name]   = the name of the auto-complete, category-capturing field (defaults to :category)
     # [options.include_js]  = add link to files listed in category_selector_includes? defaults to true, set to false only when these files are already included in head
     # [options.include_styles]  = add link to files listed in category_selector_include_stylesheets? defaults to true, set to false when these files are already included in head or where included in a previous call to category_fields
     
     subject = options[:subject]
-    fieldname = options[:fieldname] || :category
-    options[:singleSelectionTree] = false if options[:singleSelectionTree].nil?
+    options[:single_selection] = false if options[:single_selection].nil?
     options[:selectable] = true if options[:selectable].nil?
     options[:include_js] = true if options[:include_js].nil?
     options[:include_styles] = true if options[:include_styles].nil?
-    unique_id = "#{options[:varname].to_s}_#{fieldname.to_s}".gsub(/[^\w_]/, '')
+    var_name_str = options[:var_name].to_s
+    
+    field_name = options[:field_name] || :category
+    if field_name.instance_of? Array
+      unique_id = ([var_name_str] + field_name.collect(&:to_s)).join('_')
+      field_name_str = var_name_str + field_name.collect{ |f| "[#{f.to_s}]" }.join
+      field_name_str.insert(-2, '_ids')
+    else
+      unique_id = "#{var_name_str}_#{field_name.to_s}"
+      field_name_str = "#{var_name_str}[#{field_name.to_s}_id]"
+    end
+    field_name_str << '[]' if !options[:single_selection]
+    options[:field_name] = field_name_str
+    
+    unique_id.gsub!(/[^\w_]/, '')
     result = "<tr><td style='text-align: right; font-size:11pt;font-weight:bold;font-size:10pt;white-space:nowrap'>#{subject[:label]}</td>\n"
     result << "<td style=''>#{subject[:display]}</td></tr>\n"
     result << topic_filter(:root => options[:root], :unique_id => unique_id) if options[:selectable]
     result << "<tr id='#{unique_id}_characteristic-row'><td style='text-align:right;font-weight:bold'>Category</td>\n"
-    result << "<td>#{category_selector(unique_id, fieldname, options)}</td></tr>"
-
-    unless options[:extrafields].nil?
-      options[:extrafields].each do |i|
+    selected_categories = []
+    if options[:single_selection]
+      selected_category = instance_variable_get("@#{var_name_str}").send(field_name)
+      selected_categories << selected_category if !selected_category.nil?
+    else
+      if field_name.instance_of? Array
+        selected_categories = instance_variable_get("@#{var_name_str}").send(field_name[0])
+        1.upto(field_name.size-1) {|i| selected_categories.collect!{|e| e.send(field_name[i])} }
+      else
+        selected_categories = instance_variable_get("@#{var_name_str}").send(field_name)
+      end
+    end    
+    result << "<td>#{category_selector(unique_id, selected_categories, options)}</td></tr>\n"
+    result << "<tr><td></td><td colspan=\'2\' style=\'padding-top:1px; padding-bottom:4px\' id=\'#{unique_id}_bin\'>\n"
+    if selected_categories.empty?
+      result << "<input type='hidden' name=\"#{field_name_str}\" id='searcher_id_input_#{unique_id}' value=\"\" />" if options[:single_selection]
+    else
+      selected_categories.each do |c|
+        result << "<span id=\"#{unique_id}_bin_item_#{c.id}\" class=\"tree-names\" style=\"line-height:19px;white-space:nowrap;padding:2px 3px 2px 2px; color:#404040; background-color:#f1f1f1; border:1pt #ccc solid;margin-right:3px;font-size:7pt\"><a href=\"#\" class=\"tree-remove\"><img src=\"/images/delete.png\" height=16 width=16 border=0 alt=\"x\" style=\"display:inline;position:relative;top:4px;left:-2px\"/></a>#{c.title}</span>\n"
+        result << "<input type='hidden' name=\"#{field_name_str}\" id='searcher_id_input_#{unique_id}' value=\"#{c.id }\" />\n"
+      end
+    end
+    result << "</td></tr>"
+    unless options[:extra_fields].nil?
+      options[:extra_fields].each do |i|
         result << "<tr class='annotation'><td style='text-align:right;white-space:nowrap'>#{i[:label]}</td>\n"
         result << "<td>#{i[:field]}</td></tr>"
       end
     end
-    	
     result
   end
   
@@ -99,13 +132,11 @@ module TopicalMapCategoriesHelper
     return_str
   end
   
-  # Required options: options[:varname], options[:singleSelectionTree]
+  # Required options: options[:var_name], options[:single_selection]
   # Optional: options[:root], options[:include_js]
-  def category_selector(unique_id, field_name, options)
-    ivn_s = options[:varname].to_s
-
+  def category_selector(unique_id, selected_categories, options)
     # Create a unique name for the JS variable that will hold the ModelSearcher object.
-    js_variable_name = "#{unique_id}"
+    js_variable_name = unique_id
     # The variable holding the ModelSearcher needs to be defined outside of jQuery(document).ready(), so that it
     # has global scope and can be accessed by other JavaScript if need be.
 
@@ -113,20 +144,17 @@ module TopicalMapCategoriesHelper
     return_str << category_selector_include_styles if options[:include_styles]
     
     div_id = "#{unique_id}_tmb_category_selector"
-    selected_category = instance_variable_get("@#{ivn_s}").send(field_name)
-    selected_object = selected_category.blank? || selected_category.instance_of?(Array) ? "''" : "{id: '#{selected_category.id}', name: '#{escape_javascript(selected_category.title)}'}"
-    field_name = ivn_s + '[' + field_name.to_s + '_id]'
-    return_str += "<input type='hidden' name=\"#{field_name}\" id='searcher_id_input_#{unique_id}' value=\"#{selected_category.blank? ? '' : selected_category.id }\" />"
+    selected_objects = selected_categories.collect{|c| "{id: '#{c.id}', name: '#{escape_javascript(c.title)}'}" }
+    # selected_object = selected_category.blank? || selected_category.instance_of?(Array) ? "''" :
     selected_root = options[:root].nil? ? 'All' : options[:root].id
-
     return_str += "
       <script type=\"text/javascript\">
         var #{js_variable_name} = new ModelSearcher(),
             #{js_variable_name}_tmb_options = {
-              singleSelectionTree: '#{options[:singleSelectionTree]}',
+              singleSelection: #{options[:single_selection]},
               varname: '#{js_variable_name}',
               selectedRoot: '#{selected_root}',
-              fieldName: '#{field_name}',
+              fieldName: '#{options[:field_name]}',
           		fieldLabel: '',
           		proxy: '#{ActionController::Base.relative_url_root}/proxy_engine/utils/proxy/?proxy_url=',
           		list_url_root: '#{Category.get_url(:list, :format => 'json')}',
@@ -140,7 +168,7 @@ module TopicalMapCategoriesHelper
         });
       </script>"
     #if selected_category.blank?
-      val_field = "<input type='text' name='searcher_autocomplete' id='searcher_autocomplete_#{unique_id}' style='padding:3px;width: 300px;' autofocus />"      
+    val_field = "<input type='text' name='searcher_autocomplete' id='searcher_autocomplete_#{unique_id}' style='padding:3px;width: 300px;' autofocus />"      
     #else
     #  val_field = selected_category.instance_of?(Array) ? '-' : selected_category.title
     #end

@@ -19,7 +19,6 @@ module TopicalMapCategoriesHelper
     options[:include_js] = true if options[:include_js].nil?
     options[:include_styles] = true if options[:include_styles].nil?
     var_name_str = options[:var_name].to_s
-    
     field_name = options[:field_name] || :category
     if field_name.instance_of? Array
       unique_id = ([var_name_str] + field_name.collect(&:to_s)).join('_')
@@ -47,6 +46,13 @@ module TopicalMapCategoriesHelper
         1.upto(field_name.size-1) {|i| selected_categories.collect!{|e| e.send(field_name[i])} }
       else
         selected_categories = instance_variable_get("@#{var_name_str}").send(field_name)
+        if selected_categories.nil?
+          selected_categories = []
+        else
+          if !selected_categories.instance_of? Array
+            selected_categories = [selected_categories]
+          end
+        end
       end
     end    
     result << "<td>#{category_selector(unique_id, selected_categories, options)}</td></tr>\n"

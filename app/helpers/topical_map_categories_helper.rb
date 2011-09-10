@@ -103,7 +103,7 @@ module TopicalMapCategoriesHelper
       return_str << category_selector_include_styles
       return_str << category_selector_includes
     end
-    selected_object = "''"
+    selected_object = ""
     category_id = options[:category_id]
     field_name = options[:field_name]
 

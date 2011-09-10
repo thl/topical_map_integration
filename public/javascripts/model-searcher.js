@@ -296,7 +296,7 @@ function ModelSearcher(){
 								that.hiddenIdInput.val(that.hiddenIdInput[0].value+','+id);
 								that.treeNames.html(that.treeNames[0].innerHTML + ', ' + names[i]);
 							}
-						}						
+						}
 					}
 					that.autocompleteInput.val('');
 					that.treeRemove.show();
@@ -333,9 +333,9 @@ function ModelSearcher(){
 						that.hiddenIdInput.val(that.hiddenIdInput[0].value+','+id);
 						that.treeNames.html(that.treeNames[0].innerHTML + ', ' + object.name);
 					}
-				}						
+				}
 			}
-			that.treeRemove.show();			
+			that.treeRemove.show();
 		} else {
 			if ($bRow.length==0) $bRow = jQuery("<tr><td></td><td colspan='2' style='padding-top:1px; padding-bottom:4px' id='" + that.bRowID + "'></td></tr>").insertAfter(jQuery(that.cRowSelector)).find('td#' + that.bRowID);
 			if (that.singleSelection)

@@ -30,7 +30,7 @@ module TopicalMapCategoriesHelper
     end
     field_name_str << '[]' if !options[:single_selection]
     options[:field_name] = field_name_str
-    
+    conditions = options.delete(:conditions)
     unique_id.gsub!(/[^\w_]/, '')
     result = "<tr><td style='text-align: right; font-size:11pt;font-weight:bold;font-size:10pt;white-space:nowrap'>#{subject[:label]}</td>\n"
     result << "<td style=''>#{subject[:display]}</td></tr>\n"
@@ -43,13 +43,16 @@ module TopicalMapCategoriesHelper
     else
       if field_name.instance_of? Array
         selected_categories = instance_variable_get("@#{var_name_str}").send(field_name[0])
+        selected_categories = selected_categories.all(:conditions => conditions) if !conditions.nil?
         1.upto(field_name.size-1) {|i| selected_categories.collect!{|e| e.send(field_name[i])} }
       else
         selected_categories = instance_variable_get("@#{var_name_str}").send(field_name)
         if selected_categories.nil?
           selected_categories = []
         else
-          if !selected_categories.instance_of? Array
+          if selected_categories.instance_of? Array
+            selected_categories = selected_categories.all(:conditions => conditions) if !conditions.nil?
+          else
             selected_categories = [selected_categories]
           end
         end

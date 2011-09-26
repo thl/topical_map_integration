@@ -120,7 +120,7 @@ module TopicalMapCategoriesHelper
     js_variable_name = "category_searcher_#{field_name}".gsub(/[^\w_]/, '')
     # The variable holding the ModelSearcher needs to be defined outside of jQuery(document).ready(), so that it
     # has global scope and can be accessed by other JavaScript if need be.
-    return_str += "
+    return_str << "
       <script type=\"text/javascript\">
         var #{js_variable_name};
         jQuery(document).ready(function(){
@@ -133,10 +133,10 @@ module TopicalMapCategoriesHelper
         		proxy: '#{ActionController::Base.relative_url_root}/proxy_engine/utils/proxy/?proxy_url='
         	});
         });
-      </script>"
+      </script>".html_safe
     # Need the ability to manually add in the span so we can place the <script/> elsewhere in the DOM
     if !options[:exclude_span]
-      return_str += '<span id="tmb_category_selector"></span>'
+      return_str << '<span id="tmb_category_selector"></span>'
     end
     return_str
   end
@@ -156,7 +156,7 @@ module TopicalMapCategoriesHelper
     selected_objects = selected_categories.collect{|c| "{id: '#{c.id}', name: '#{escape_javascript(c.title)}'}" }
     # selected_object = selected_category.blank? || selected_category.instance_of?(Array) ? "''" :
     selected_root = options[:root].nil? ? 'All' : options[:root].id
-    return_str += "
+    return_str << "
       <script type=\"text/javascript\">
         var #{js_variable_name} = new ModelSearcher(),
             #{js_variable_name}_tmb_options = {
@@ -175,13 +175,13 @@ module TopicalMapCategoriesHelper
         jQuery(document).ready(function(){
           #{js_variable_name}.reinit(\"#{div_id}\", #{js_variable_name}_tmb_options);
         });
-      </script>"
+      </script>".html_safe
     #if selected_category.blank?
-    val_field = "<input type='text' name='searcher_autocomplete' id='searcher_autocomplete_#{unique_id}' style='padding:3px;width: 300px;' autofocus />"      
+    val_field = "<input type='text' name='searcher_autocomplete' id='searcher_autocomplete_#{unique_id}' style='padding:3px;width: 300px;' autofocus />".html_safe
     #else
     #  val_field = selected_category.instance_of?(Array) ? '-' : selected_category.title
     #end
-    return_str += val_field
+    return_str << val_field
     return_str
   end
   
@@ -198,23 +198,23 @@ module TopicalMapCategoriesHelper
     result << "&nbsp; <a id='browse_link_#{unique_id}' href='#' style='font-size:9pt; display:none'>Browse</a></td></tr>\n"
     result << '<tr><td> </td></tr>'
     result
-  end  
+  end
   
   def category_selector_old(main_category, instance_variable_name, field_name, includes = true)
     tag_prefix = "#{instance_variable_name}_#{field_name}"
     selected_category = instance_variable_get("@#{instance_variable_name.to_s}").send(field_name)
     return_str = includes ? category_selector_includes_old : ''
-    return_str += "<span id=\"#{tag_prefix}_name\">"
+    return_str << "<span id=\"#{tag_prefix}_name\">"
     options = { :modal => true } #:height => 300, :width => 300}
     if selected_category.nil?
-      return_str += '<i>None selected</i>'
+      return_str << '<i>None selected</i>'
     else
-      return_str += selected_category.title
+      return_str << selected_category.title
       options[:selected_category_id] = selected_category.id
     end
     category_url = category_children_path(main_category, options)
-    return_str += "</span>\n("
-    return_str += link_to("select #{h(main_category.title)}", category_url, :class => 'thickbox', :id => tag_prefix, :title => '') +
+    return_str << "</span>\n("
+    return_str << link_to("select #{h(main_category.title)}", category_url, :class => 'thickbox', :id => tag_prefix, :title => '') +
                   ")\n" +
                   hidden_field(instance_variable_name, "#{field_name}_id")
     return_str

@@ -1,7 +1,7 @@
 # TODO: This and the related model-searcher.js are a total mess. Completely reorganize to make more intuitive and cleaner. -jev3a 6/13/11
 
 module TopicalMapCategoriesHelper
-
+  BROWSE_SNIPPET = "Choose a category first to browse its subcategories, or have auto-complete limited to those subcategories."
   def category_fields( options = {} )
     # options.subject       = hash of name/image being associated with, and label: { :display => 'name/img', :label => 'label' }
     # options.root          = category to use as starting root
@@ -194,8 +194,8 @@ module TopicalMapCategoriesHelper
     div_id = "#{unique_id}_tmb_category_selector" # this is also in category_selector; need to consolidate
     result = '<tr><td> </td></tr>'
     result << "\n<tr><td style='background-color: #f1f1f1;text-align: right; font-size:10pt;border: 1pt solid #ccc; border-right-style: none; white-space: nowrap'>Category Filter</td><td style='width:100%;background-color: #f1f1f1;border: 1pt solid #ccc; border-left-style: none'>"
-    result << select_tag(:root_topics, options_for_select(['All'] + cats.collect{|cat| [cat.title, cat.id]}, (options[:root].nil? ? 'All' : options[:root].id)), :onchange => "#{unique_id}_tmb_options.selectedRoot = this.value; #{unique_id}.reinit(\"#{div_id}\", #{unique_id}_tmb_options); if ( this.value == 'All') { $('#browse_link_#{unique_id}').hide()} else {$('#browse_link_#{unique_id}').show()}; $('#searcher_autocomplete_#{unique_id}').focus()", :style => 'font-size: 9pt')
-    result << "&nbsp; <a id='browse_link_#{unique_id}' href='#' style='font-size:9pt; display:none'>Browse</a></td></tr>\n"
+    result << select_tag(:root_topics, options_for_select(['All'] + cats.collect{|cat| [cat.title, cat.id]}, (options[:root].nil? ? 'All' : options[:root].id)), :onchange => "#{unique_id}_tmb_options.selectedRoot = this.value; #{unique_id}.reinit(\"#{div_id}\", #{unique_id}_tmb_options); if ( this.value == 'All') { $('#browse_link_#{unique_id}').hide(); $('#browse_label_#{unique_id}').show(); } else {$('#browse_link_#{unique_id}').show(); $('#browse_label_#{unique_id}').hide()}; $('#searcher_autocomplete_#{unique_id}').focus()", :style => 'font-size: 9pt')
+    result << "&nbsp; <a id=\"browse_link_#{unique_id}\" href=\"#\" style=\"font-size:9pt; display:none\">Browse</a> <span id=\"browse_label_#{unique_id}\">#{BROWSE_SNIPPET}</span></td></tr>\n"
     result << '<tr><td> </td></tr>'
     result
   end

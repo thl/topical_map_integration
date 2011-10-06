@@ -3,15 +3,16 @@
 module TopicalMapCategoriesHelper
   BROWSE_SNIPPET = "Choose a category first to browse its subcategories, or have auto-complete limited to those subcategories."
   def category_fields( options = {} )
-    # options.subject       = hash of name/image being associated with, and label: { :display => 'name/img', :label => 'label' }
-    # options.root          = category to use as starting root
-    # options.varname       = instance variable name
-    # [options.single_selection] = whether one can select multiple items or just a single item (boolean, defaults to false)
-    # [options.extra_fields] = array of hashes like this [{:field => 'fieldname', :label => 'label'}, {:field => 'field2name', :label => 'label2'}, ...]
-    # [options.selectable]  = show the topic select box (boolean, defaults to true)
-    # [options.field_name]   = the name of the auto-complete, category-capturing field (defaults to :category)
-    # [options.include_js]  = add link to files listed in category_selector_includes? defaults to true, set to false only when these files are already included in head
-    # [options.include_styles]  = add link to files listed in category_selector_include_stylesheets? defaults to true, set to false when these files are already included in head or where included in a previous call to category_fields
+    # options.subject          = hash of name/image being associated with, and label: { :display => 'name/img', :label => 'label' }
+    # options.root             = category to use as starting root
+    # options.varname          = instance variable name
+    # options.single_selection = whether one can select multiple items or just a single item (boolean, defaults to false)
+    # options.extra_fields     = array of hashes like this [{:field => 'fieldname', :label => 'label'}, {:field => 'field2name', :label => 'label2'}, ...]
+    # options.selectable       = show the topic select box (boolean, defaults to true)
+    # options.field_name       = the name of the auto-complete, category-capturing field (defaults to :category)
+    # options.field_human_name = what is going to be displayed beside the auto-complete text field (defaults to 'Category')
+    # options.include_js       = add link to files listed in category_selector_includes? defaults to true, set to false only when these files are already included in head
+    # options.include_styles   = add link to files listed in category_selector_include_stylesheets? defaults to true, set to false when these files are already included in head or where included in a previous call to category_fields
     
     subject = options[:subject]
     options[:single_selection] = false if options[:single_selection].nil?
@@ -31,11 +32,12 @@ module TopicalMapCategoriesHelper
     field_name_str << '[]' if !options[:single_selection]
     options[:field_name] = field_name_str
     conditions = options.delete(:conditions)
+    field_human_name = options.delete(:field_human_name) || 'Category'
     unique_id.gsub!(/[^\w_]/, '')
     result = "<tr><td style='text-align: right; font-size:11pt;font-weight:bold;font-size:10pt;white-space:nowrap'>#{subject[:label]}</td>\n"
     result << "<td style=''>#{subject[:display]}</td></tr>\n"
     result << topic_filter(:root => options[:root], :unique_id => unique_id) if options[:selectable]
-    result << "<tr id='#{unique_id}_characteristic-row'><td style='text-align:right;font-weight:bold'>Category</td>\n"
+    result << "<tr id='#{unique_id}_characteristic-row'><td style='text-align:right;font-weight:bold'>#{field_human_name}</td>\n"
     selected_categories = []
     if options[:single_selection]
       selected_category = instance_variable_get("@#{var_name_str}").send(field_name)

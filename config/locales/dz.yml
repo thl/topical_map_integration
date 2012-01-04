@@ -1,0 +1,5 @@
+# Localization file for Dzongkha of kmaps integration plugin.
+dz:
+    activeresource:
+        models:
+            category: 'Characteristic'

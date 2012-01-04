@@ -1,0 +1,5 @@
+# Localization file for Tibetan of kmaps integration plugin.
+bo:
+    activeresource:
+        models:
+            category: 'Characteristic'

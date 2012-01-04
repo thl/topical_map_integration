@@ -1,0 +1,12 @@
+# Localization file for English of kmaps integration plugin.
+en:
+    activeresource:
+        models:
+            category:
+                one: 'subject'
+                other: 'subjects'
+        attributes:
+            category:
+                child: 'Subject Division'
+                root: 'Master Subject'
+                parent: 'Parent Subject'

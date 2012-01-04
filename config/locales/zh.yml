@@ -1,0 +1,5 @@
+# Localization file for Chinese of kmaps integration plugin.
+zh:
+    activeresource:
+        models:
+            category: 'Characteristic'

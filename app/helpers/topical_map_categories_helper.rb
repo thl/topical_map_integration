@@ -1,7 +1,7 @@
 # TODO: This and the related model-searcher.js are a total mess. Completely reorganize to make more intuitive and cleaner. -jev3a 6/13/11
 
 module TopicalMapCategoriesHelper
-  BROWSE_SNIPPET = "Choose a category first to browse its subcategories, or have auto-complete limited to those subcategories."
+  BROWSE_SNIPPET = "Choose a category first to browse its subcategories in a tree, or limit auto-complete to that category."
   def category_fields( options = {} )
     # options.subject          = hash of name/image being associated with, and label: { :display => 'name/img', :label => 'label' }
     # options.root             = category to use as starting root
@@ -36,7 +36,7 @@ module TopicalMapCategoriesHelper
     unique_id.gsub!(/[^\w_]/, '')
     result = "<tr><td style='text-align: right; font-size:11pt;font-weight:bold;font-size:10pt;white-space:nowrap'>#{subject[:label]}</td>\n"
     result << "<td style=''>#{subject[:display]}</td></tr>\n"
-    result << topic_filter(:root => options[:root], :unique_id => unique_id) if options[:selectable]
+    result << topic_filter(:root => options[:root], :unique_id => unique_id, :show_dropdown => options.delete(:show_dropdown)) if options[:selectable]
     result << "<tr id='#{unique_id}_characteristic-row'><td style='text-align:right;font-weight:bold'>#{field_human_name}</td>\n"
     selected_categories = []
     if options[:single_selection]
@@ -192,12 +192,13 @@ module TopicalMapCategoriesHelper
   def topic_filter( options = {} )
     # return '' if params[:action] == 'edit'
     root = options[:root]
+    show_dropdown = true if options[:root].nil? || options[:show_dropdown].nil?
     cats = Category.roots # root.nil? ? Category.roots : root.children
     unique_id = options[:unique_id]
     div_id = "#{unique_id}_tmb_category_selector" # this is also in category_selector; need to consolidate
     result = '<tr><td> </td></tr>'
     result << "\n<tr><td style='background-color: #f1f1f1;text-align: right; font-size:10pt;border: 1pt solid #ccc; border-right-style: none; white-space: nowrap'>Category Filter</td><td style='width:100%;background-color: #f1f1f1;border: 1pt solid #ccc; border-left-style: none'>"
-    result << select_tag(:root_topics, options_for_select(['All'] + cats.collect{|cat| [cat.title, cat.id]}, (root.nil? ? 'All' : root.id)), :onchange => "#{unique_id}_tmb_options.selectedRoot = this.value; #{unique_id}.reinit(\"#{div_id}\", #{unique_id}_tmb_options); if ( this.value == 'All') { $('#browse_link_#{unique_id}').hide(); $('#browse_label_#{unique_id}').show(); } else {$('#browse_link_#{unique_id}').show(); $('#browse_label_#{unique_id}').hide()}; $('#searcher_autocomplete_#{unique_id}').focus()", :style => 'font-size: 9pt')
+    result << select_tag(:root_topics, options_for_select(['All'] + cats.collect{|cat| [cat.title, cat.id]}, (root.nil? ? 'All' : root.id)), :onchange => "#{unique_id}_tmb_options.selectedRoot = this.value; #{unique_id}.reinit(\"#{div_id}\", #{unique_id}_tmb_options); if ( this.value == 'All') { $('#browse_link_#{unique_id}').hide(); $('#browse_label_#{unique_id}').show(); } else {$('#browse_link_#{unique_id}').show(); $('#browse_label_#{unique_id}').hide()}; $('#searcher_autocomplete_#{unique_id}').focus()", :style => 'font-size: 9pt') if show_dropdown
     style = " style=\"font-size:9pt; display:none\""
     result << "&nbsp; <a id=\"browse_link_#{unique_id}\" href=\"#\"#{style if root.nil?}>Browse</a> <span id=\"browse_label_#{unique_id}\"#{style if !root.nil?}>#{BROWSE_SNIPPET}</span></td></tr>\n"
     result << '<tr><td> </td></tr>'

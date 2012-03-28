@@ -2,4 +2,11 @@
 dz:
     activeresource:
         models:
-            category: 'Characteristic'
+            category:
+                one: 'subject'
+                other: 'subjects'
+        attributes:
+            category:
+                child: 'Subject Division'
+                root: 'Master Subject'
+                parent: 'Parent Subject'

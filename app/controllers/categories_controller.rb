@@ -34,10 +34,10 @@ class CategoriesController < ApplicationController
     @ancestors_for_current = @category.ancestors.collect{|c| c.id.to_i} + [@category.id.to_i]
     if request.xhr?
       render :update do |page|
-        page.replace_html 'navigation', :partial => 'index', :locals => {:categories => @categories, :margin_depth => 0}
-        page['current_category_id'].value = @category.id
-        page['current_category_title'].value = h(@category.title)
-        page['current_category_url'].value = category_children_url(@main_category, :selected_category_id => @category.id)
+        page.call "$('#navigation').html", render(:partial => 'index', :locals => {:categories => @categories, :margin_depth => 0})
+        page.call "$('current_category_id').value", @category.id
+        page.call "$('current_category_title').value", h(@category.title)
+        page.call "$('current_category_url').value", category_children_url(@main_category, :selected_category_id => @category.id)
       end
     else
       @categories = @category.children
@@ -51,13 +51,17 @@ class CategoriesController < ApplicationController
   def expand
     category = Category.find(params[:id])
     margin_depth = params[:margin_depth].to_i
-    render :partial => 'expanded', :object => category, :locals => {:margin_depth => margin_depth}
+    render :update do |page|
+      page.call "$('##{category.id}_div').html", render(:partial => 'expanded', :object => category, :locals => {:margin_depth => margin_depth})
+    end if request.xhr?
   end
 
   def contract
     category = Category.find(params[:id])
     margin_depth = params[:margin_depth].to_i
-    render :partial => 'contracted', :object => category, :locals => {:margin_depth => margin_depth}
+    render :update do |page|
+      page.call "$('##{category.id}_div').html", render(:partial => 'contracted', :object => category, :locals => {:margin_depth => margin_depth})
+    end if request.xhr?
   end
   
   private

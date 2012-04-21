@@ -1,9 +1,17 @@
-ActionController::Routing::Routes.draw do |map|
-  map.resources(:categories, :member => {:expand => :get, :contract => :get}) do |category|
-    category.resources(:children, :controller => 'categories', :member => {:expand => :get, :contract => :get})
+Rails.application.routes.draw do
+  resources :categories do
+    member do
+      get :expand
+      get :contract
+    end
+    resources :children, :controller => 'categories' do
+      member do
+        get :expand
+        get :contract
+      end
+    end
   end
-  
-  map.namespace(:kmaps_integration) do |kmaps_integration|
-    kmaps_integration.connect 'utils/proxy/', :controller => 'utils', :action => 'proxy'
+  namespace :kmaps_integration do
+    match 'utils/proxy/' => 'utils#proxy'
   end
 end

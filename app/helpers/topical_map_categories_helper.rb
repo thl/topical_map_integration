@@ -77,7 +77,7 @@ module TopicalMapCategoriesHelper
         result << "<td>#{i[:field]}</td></tr>"
       end
     end
-    result
+    result.html_safe
   end
   
   def category_form_table(options = {})
@@ -87,7 +87,7 @@ module TopicalMapCategoriesHelper
       		<td></td>
       		<td>#{options[:footer]}</td>
       	</tr>
-      </table>"
+      </table>".html_safe
   end
 
   def category_selector_include_styles
@@ -99,7 +99,7 @@ module TopicalMapCategoriesHelper
   end
 
   def category_selector_includes_old
-    [javascript_include_tag('thickbox-compressed', 'category_selector'), stylesheet_link_tag('thickbox', 'category_selector')].join("\n")
+    [javascript_include_tag('thickbox-compressed', 'category_selector'), stylesheet_link_tag('thickbox', 'category_selector')].join("\n").html_safe
   end
   
   def category_searcher(includes = true, options = {})
@@ -135,12 +135,12 @@ module TopicalMapCategoriesHelper
         		proxy: '#{ActionController::Base.relative_url_root}/proxy_engine/utils/proxy/?proxy_url='
         	});
         });
-      </script>".html_safe
+      </script>"
     # Need the ability to manually add in the span so we can place the <script/> elsewhere in the DOM
     if !options[:exclude_span]
       return_str << '<span id="tmb_category_selector"></span>'
     end
-    return_str
+    return_str.html_safe
   end
   
   # Required options: options[:var_name], options[:single_selection]
@@ -177,14 +177,14 @@ module TopicalMapCategoriesHelper
         jQuery(document).ready(function(){
           #{js_variable_name}.reinit(\"#{div_id}\", #{js_variable_name}_tmb_options);
         });
-      </script>".html_safe
+      </script>"
     #if selected_category.blank?
     val_field = "<input type='text' name='searcher_autocomplete' id='searcher_autocomplete_#{unique_id}' style='padding:3px;width: 300px;' autofocus />".html_safe
     #else
     #  val_field = selected_category.instance_of?(Array) ? '-' : selected_category.title
     #end
     return_str << val_field
-    return_str
+    return_str.html_safe
   end
   
   # options.unique_id = unique identifier for this select box and for referring to js controller scripts
@@ -202,7 +202,7 @@ module TopicalMapCategoriesHelper
     style = " style=\"font-size:9pt; display:none\""
     result << "&nbsp; <a id=\"browse_link_#{unique_id}\" href=\"#\"#{style if root.nil?}>Browse</a> <span id=\"browse_label_#{unique_id}\"#{style if !root.nil?}>#{BROWSE_SNIPPET}</span></td></tr>\n"
     result << '<tr><td> </td></tr>'
-    result
+    result.html_safe
   end
   
   def category_selector_old(main_category, instance_variable_name, field_name, includes = true)
@@ -222,7 +222,7 @@ module TopicalMapCategoriesHelper
     return_str << link_to("select #{h(main_category.title)}", category_url, :class => 'thickbox', :id => tag_prefix, :title => '') +
                   ")\n" +
                   hidden_field(instance_variable_name, "#{field_name}_id")
-    return_str
+    return_str.html_safe
   end
     
   def loading_kmaps_animation_script(id)

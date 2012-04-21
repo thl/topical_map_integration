@@ -1,1 +1,1 @@
-<%= link_to_remote h(category.title), { :url => category_child_path(@main_category, category), :method => 'get', :loading => loading_kmaps_animation_script(category.id) } %>
+<%= link_to h(category.title), category_child_path(@main_category, category), :remote => true; :loading => loading_kmaps_animation_script(category.id) %>

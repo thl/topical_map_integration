@@ -1,0 +1,4 @@
+$("#navigation").html("<%= escape_javascript(render(:partial => 'index', :locals => {:categories => @categories, :margin_depth => 0})) %>");
+$("current_category_id").value("<%= @category.id %>");
+$("current_category_title").value("<%= escape_javascript(@category.title) %>"); 
+$("current_category_url").value("<%= escape_javascript(category_children_url(@main_category, :selected_category_id => @category.id)) %>");

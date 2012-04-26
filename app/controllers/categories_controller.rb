@@ -2,6 +2,7 @@ require_dependency 'application_controller'
 
 class CategoriesController < ApplicationController
   before_filter :find_main_category
+  respond_to :html, :xml, :js
   
   # GET /categories
   # GET /categories.xml
@@ -32,36 +33,19 @@ class CategoriesController < ApplicationController
       @categories = @main_category.children
     end
     @ancestors_for_current = @category.ancestors.collect{|c| c.id.to_i} + [@category.id.to_i]
-    if request.xhr?
-      render :update do |page|
-        page.call "$('#navigation').html", render(:partial => 'index', :locals => {:categories => @categories, :margin_depth => 0})
-        page.call "$('current_category_id').value", @category.id
-        page.call "$('current_category_title').value", h(@category.title)
-        page.call "$('current_category_url').value", category_children_url(@main_category, :selected_category_id => @category.id)
-      end
-    else
-      @categories = @category.children
-      respond_to do |format|
-        format.html # show.html.erb
-        format.xml  { render :xml => @category }
-      end
-    end
+    respond_with(@category)
   end
   
+  # renders expand.js.erb
   def expand
-    category = Category.find(params[:id])
-    margin_depth = params[:margin_depth].to_i
-    render :update do |page|
-      page.call "$('##{category.id}_div').html", render(:partial => 'expanded', :object => category, :locals => {:margin_depth => margin_depth})
-    end if request.xhr?
+    @category = Category.find(params[:id])
+    @margin_depth = params[:margin_depth].to_i
   end
 
+  # renders contract.js.erb
   def contract
-    category = Category.find(params[:id])
-    margin_depth = params[:margin_depth].to_i
-    render :update do |page|
-      page.call "$('##{category.id}_div').html", render(:partial => 'contracted', :object => category, :locals => {:margin_depth => margin_depth})
-    end if request.xhr?
+    @category = Category.find(params[:id])
+    @margin_depth = params[:margin_depth].to_i
   end
   
   private

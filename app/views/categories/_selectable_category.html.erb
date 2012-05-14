@@ -1,1 +1,3 @@
-<%= link_to h(category.title), category_child_path(@main_category, category), :remote => true; :loading => loading_kmaps_animation_script(category.id) %>
+<%  category_id = category.id %>
+<%= link_to h(category.title), category_child_path(@main_category, category), :remote => true, :id => "category_#{category_id}_link" %>
+<%= javascript_tag("$('#category_#{category_id}_link').bind('ajax:loading', function(){ #{loading_kmaps_animation_script(category_id)} })") %>

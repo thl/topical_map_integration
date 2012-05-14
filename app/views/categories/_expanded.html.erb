@@ -2,8 +2,10 @@
 <%  has_no_children = expanded.children.empty? 
     if has_no_children %>
       &#9674;
-<%  else %>
-<%=   link_to '-', contract_category_child_path(@main_category, expanded, :margin_depth => margin_depth), :remote => true, :loading => loading_kmaps_animation_script(expanded.id), :class => 'collapsable' %>
+<%  else 
+      expanded_id = expanded.id %>
+<%=   link_to '-', contract_category_child_path(@main_category, expanded, :margin_depth => margin_depth), :remote => true, :loading => loading_kmaps_animation_script(expanded_id), :class => 'collapsable', :id => "contract_#{expanded_id}_link" %>
+<%=   javascript_tag("$('#contract_#{expanded_id}_link').bind('ajax:loading', function(){ #{loading_kmaps_animation_script(expanded_id)} })") %>
 <%  end
     selected = (!@category.nil? && @category.id.to_i==expanded.id)
     if selected %>

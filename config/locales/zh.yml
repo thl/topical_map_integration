@@ -3,10 +3,10 @@ zh:
     activeresource:
         models:
             category:
-                one: 'subject'
-                other: 'subjects'
+                one: '主题'
+                other: '主题'
         attributes:
             category:
-                child: 'Subject Division'
-                root: 'Master Subject'
+                child: '主题分类'
+                root: '总主题'
                 parent: 'Parent Subject'

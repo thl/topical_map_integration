@@ -3,10 +3,10 @@ bo:
     activeresource:
         models:
             category:
-                one: 'subject'
-                other: 'subjects'
+                one: 'བརྗོད་བྱ་གཙོ་བོ།'
+                other: 'བརྗོད་བྱ་གཙོ་བོ་དག'
         attributes:
             category:
-                child: 'Subject Division'
-                root: 'Master Subject'
-                parent: 'Parent Subject'
+                child: 'བརྗོད་བྱ་གཙོ་བོའི་རིགས་དབྱེ།'
+                root: 'སྤྱིའི་བརྗོད་བྱ་གཙོ་བོ།'
+                parent: 'བརྗོད་གཞི་ཙོ་བོ།'

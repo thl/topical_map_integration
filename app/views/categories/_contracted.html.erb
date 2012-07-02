@@ -1,4 +1,4 @@
-<%= TopicalMapBuilderIntegration::Util::MARGIN * margin_depth %>
+<%= (TopicalMapBuilderIntegration::Util::MARGIN * margin_depth).html_safe %>
 <%  has_no_children = contracted.children.empty? 
     if has_no_children %>
       &#9674;

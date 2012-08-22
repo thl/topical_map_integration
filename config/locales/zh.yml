@@ -9,4 +9,4 @@ zh:
             category:
                 child: '主题分类'
                 root: '总主题'
-                parent: 'Parent Subject'
+                parent: '上一级主题'

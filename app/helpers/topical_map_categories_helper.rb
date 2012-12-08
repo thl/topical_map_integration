@@ -90,23 +90,15 @@ module TopicalMapCategoriesHelper
       </table>".html_safe
   end
 
-  def category_selector_include_styles
-    stylesheet_link_tag('jquery.autocomplete', 'jquery.checktree', 'jquery.draggable.popup')
-  end
-
-  def category_selector_includes
-    javascript_include_tag('jquery.autocomplete', 'jquery.checktree', 'model-searcher', 'jquery.draggable.popup')
-  end
-
   def category_selector_includes_old
-    [javascript_include_tag('thickbox-compressed', 'category_selector'), stylesheet_link_tag('thickbox', 'category_selector')].join("\n").html_safe
+    [javascript_include_tag('thickbox-compressed', 'kmaps_integration/category_selector'), stylesheet_link_tag('thickbox', 'kmaps_integration/category_selector')].join("\n").html_safe
   end
   
   def category_searcher(includes = true, options = {})
     return_str = ''
     if includes
-      return_str << category_selector_include_styles
-      return_str << category_selector_includes
+      return_str << stylesheet_link_tag('kmaps_integration/application')
+      return_str << javascript_include_tag('kmaps_integration/application')
     end
     selected_object = ""
     category_id = options[:category_id]
@@ -151,8 +143,8 @@ module TopicalMapCategoriesHelper
     # The variable holding the ModelSearcher needs to be defined outside of jQuery(document).ready(), so that it
     # has global scope and can be accessed by other JavaScript if need be.
 
-    return_str = options[:include_js] ? category_selector_includes : ''
-    return_str << category_selector_include_styles if options[:include_styles]
+    return_str = options[:include_js] ? javascript_include_tag('kmaps_integration/application') : ''
+    return_str << stylesheet_link_tag('kmaps_integration/application') if options[:include_styles]
     
     div_id = "#{unique_id}_tmb_category_selector"
     selected_objects = selected_categories.collect{|c| "{id: '#{c.id}', name: '#{escape_javascript(c.title)}'}" }
@@ -226,6 +218,6 @@ module TopicalMapCategoriesHelper
   end
     
   def loading_kmaps_animation_script(id)
-    "$(\'##{id}_div\').css(\'background\', \'url(../images/loadingAnimation2.gif) no-repeat center right\')"
+    "$(\'##{id}_div\').css(\'background\', \'url(#{image_url('loadingAnimation2.gif')}) no-repeat center right\')"
   end
 end

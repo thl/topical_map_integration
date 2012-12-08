@@ -4,7 +4,7 @@ bo:
         models:
             category:
                 one: 'བརྗོད་བྱ་གཙོ་བོ།'
-                other: 'བརྗོད་བྱ་གཙོ་བོ་དག'
+                other: 'བརྗོད་བྱ་གཙོ་བོ་དག་'
         attributes:
             category:
                 child: 'བརྗོད་བྱ་གཙོ་བོའི་རིགས་དབྱེ།'

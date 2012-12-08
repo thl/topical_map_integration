@@ -1,6 +1,4 @@
-namespace :kmaps do
-  desc "Syncronize extra files for TMB Integration"
-  task :sync do
-    system "rsync -ruvK --exclude '.*' vendor/plugins/kmaps_integration/public ."
-  end
-end
+# desc "Explaining what the task does"
+# task :kmaps_integration do
+#   # Task goes here
+# end

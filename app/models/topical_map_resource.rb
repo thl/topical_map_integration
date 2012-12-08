@@ -5,7 +5,7 @@ class TopicalMapResource < ActiveResource::Base
     headers['Host'] = 'staging.subjects.thlib.org'
   elsif hostname == 'dev.thlib.org'
     self.site = 'http://127.0.0.1/'
-    headers['Host'] = 'dev.subjects.thlib.org'
+    headers['Host'] = 'dev-subjects.thlib.org'
   elsif hostname == 'apoc.village.virginia.edu'  
     self.site = 'http://subjects.kmaps.virginia.edu'
   elsif hostname == 'e-bhutan.bt'
@@ -17,7 +17,7 @@ class TopicalMapResource < ActiveResource::Base
     headers['Host'] = 'subjects.thlib.org'
   else
     self.site = 'http://tmb.thlib.org/'
-  end  
+  end
   self.timeout = 100
   self.format = :xml
 end

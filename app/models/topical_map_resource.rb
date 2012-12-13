@@ -10,7 +10,7 @@ class TopicalMapResource < ActiveResource::Base
     self.site = 'http://subjects.kmaps.virginia.edu'
   elsif hostname == 'e-bhutan.bt'
     self.site = 'http://www.e-bhutan.net.bt/kmaps/'
-  elsif hostname.ends_with? 'local'
+  elsif hostname.ends_with?('local') || hostname.starts_with?('vpn-user')
     self.site = 'http://localhost/thl/kmaps/'
   elsif hostname =~ /sds.+\.itc\.virginia\.edu/
     self.site = 'http://127.0.0.1/'

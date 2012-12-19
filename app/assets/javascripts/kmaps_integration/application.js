@@ -13,3 +13,4 @@
 // Old used thickbox-compressed and kmaps_integration/category_selector
 //= require kmaps_integration/jquery.checktree
 //= require kmaps_integration/model-searcher
+//= require kmaps_integration/jquery.draggable.popup

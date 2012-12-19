@@ -137,20 +137,19 @@ function ModelSearcher(){
 		}
 
 		jQuery.getJSON(this.listService, function(data){
-			that.autocompleteInput.unautocomplete().autocomplete(data, {
-				matchContains: true,
-				mustMatch: true,
-				max: 20,
-				formatItem: that.autocompleteFormatItem,
-				formatMatch: that.autocompleteFormatMatch,
-				formatResult: that.autocompleteFormatItem,
-				multiple: !this.searcher
-			});
-			that.autocompleteInput.result(that.autocompleteCallback);
+			array = []
 			that.objectList = {};
 			for(var i in data){
-				that.objectList[data[i].id] = data[i];
+				id = data[i].id
+				array.push({ label: data[i].name , value: id })
+				that.objectList[id] = data[i];
 			}
+			that.autocompleteInput.autocomplete({ source: array, 
+				select: function (event, ui) { 
+					that.addValue([ui.item.value]);
+					return false;
+				}
+			}); //multiple: !this.searcher
 		});
 		if(this.selectedObjects && this.selectedObjects.length == 1){
 			this.autocompleteInput.val(this.selectedObjects[0].name);
@@ -210,10 +209,11 @@ function ModelSearcher(){
 				} else
 				{	/* This doesn't work in safari in unpredictable cases!!!
 				    jQuery('input#' + that.hiddenFieldName + '_' + that.varname + '[value=' + id + ']').remove(); */
-					$row.find('input#[value=' + id + ']').remove();
+					$row.find('input[value=' + id + ']').remove();
 				}
 				that.checkAnnotationState();
 			});
+			that.autocompleteInput.val('');
 			return false;
 		});
 		
@@ -362,7 +362,7 @@ function ModelSearcher(){
 						that.selectedObjects.push(that.objectList[id]);
 						$bRow.append(that.binItemTemplate.replace('{content}', that.objectList[id].name).replace('{id}', id));
 					}
-					if ( jQuery('input#[value=' + id + ']', $bRow).length==0 ) {
+					if ( jQuery('input[value=' + id + ']', $bRow).length==0 ) {
 						$bRow.append(that.binHiddenFieldTemplate.replace('{value}', id));
 					}
 				}
@@ -397,27 +397,19 @@ function ModelSearcher(){
 		}
 	};
 	
+	/* DEPRECATED! Not called anymore */
 	this.autocompleteFormatItem = function(item, i, max){
 		return jQuery.trim(item.name);
 	};
-	
+
+	/* DEPRECATED! Not called anymore */
 	this.autocompleteFormatMatch = function(item, i, max){
 		return jQuery.trim(item.name);
 	};
 	
+	/* DEPRECATED! Not called anymore */
 	this.autocompleteFormatResult = function(item, i, max){
 		return item.id;
-	};
-	var thisModelSearcher = this;
-	this.autocompleteCallback = function(event, data, formatted) {
-		if(data){
-			thisModelSearcher.addValue([data.id])
-		}else{
-			thisModelSearcher.hiddenIdInput.val('');
-		}
-		/* thisModelSearcher.treeNames.html('');
-		thisModelSearcher.treeRemove.hide(); */
-		return false;
 	};
 	
 	this.createTreeFromArray = function(arr){

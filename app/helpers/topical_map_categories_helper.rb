@@ -66,7 +66,7 @@ module TopicalMapCategoriesHelper
       result << "<input type='hidden' name=\"#{field_name_str}\" id='searcher_id_input_#{unique_id}' value=\"\" />" if options[:single_selection]
     else
       selected_categories.each do |c|
-        result << "<span id=\"#{unique_id}_bin_item_#{c.id}\" class=\"tree-names\" style=\"line-height:19px;white-space:nowrap;padding:2px 3px 2px 2px; color:#404040; background-color:#f1f1f1; border:1pt #ccc solid;margin-right:3px;font-size:7pt\"><a href=\"#\" class=\"tree-remove\"><img src=\"/images/delete.png\" height=16 width=16 border=0 alt=\"x\" style=\"display:inline;position:relative;top:4px;left:-2px\"/></a>#{c.title}</span>\n"
+        result << "<span id=\"#{unique_id}_bin_item_#{c.id}\" class=\"tree-names\" style=\"line-height:19px;white-space:nowrap;padding:2px 3px 2px 2px; color:#404040; background-color:#f1f1f1; border:1pt #ccc solid;margin-right:3px;font-size:7pt\"><a href=\"#\" class=\"tree-remove\">#{image_tag('kmaps_integration/delete.png', :size => '16x16', :border => '0', :alt => 'x', :style => 'display:inline;position:relative;top:4px;left:-2px')}</a>#{c.title}</span>\n"
         result << "<input type='hidden' name=\"#{field_name_str}\" id='searcher_id_input_#{unique_id}' value=\"#{c.id }\" />\n"
       end
     end
@@ -127,7 +127,7 @@ module TopicalMapCategoriesHelper
         		proxy: '#{ActionController::Base.config.relative_url_root}/proxy_engine/utils/proxy/?proxy_url='
         	});
         });
-      </script>"
+      </script>".html_safe
     # Need the ability to manually add in the span so we can place the <script/> elsewhere in the DOM
     if !options[:exclude_span]
       return_str << '<span id="tmb_category_selector"></span>'
@@ -169,7 +169,7 @@ module TopicalMapCategoriesHelper
         jQuery(document).ready(function(){
           #{js_variable_name}.reinit(\"#{div_id}\", #{js_variable_name}_tmb_options);
         });
-      </script>"
+      </script>".html_safe
     #if selected_category.blank?
     val_field = "<input type='text' name='searcher_autocomplete' id='searcher_autocomplete_#{unique_id}' style='padding:3px;width: 300px;' autofocus />".html_safe
     #else

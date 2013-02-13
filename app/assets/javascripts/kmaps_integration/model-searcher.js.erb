@@ -230,8 +230,7 @@ function ModelSearcher(){
 		}else{
 			var $test = jQuery('#tree-loader-img'),
 				$img = $test.length ?
-								$test.show() :
-								jQuery("<img id='tree-loader-img' src='/images/loading.gif' align='right' />").insertAfter('#browse_link_' + that.varname);
+								$test.show() : jQuery("<%= image_tag('kmaps_integration/loading.gif', :id => 'tree-loader-img', :align => 'right') %>").insertAfter('#browse_link_' + that.varname);
 			jQuery.getJSON(this.treeService, function(data){
 				that.treeHtml = that.createTreeFromArray(data.category ? data.category.categories : data.categories);
 				that.loadPopup();

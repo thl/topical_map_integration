@@ -177,7 +177,7 @@ module TopicalMapCategoriesHelper
         jQuery(document).ready(function(){
           #{js_variable_name}.reinit(\"#{div_id}\", #{js_variable_name}_tmb_options);
         });
-      </script>"
+      </script>".html_safe
     #if selected_category.blank?
     val_field = "<input type='text' name='searcher_autocomplete' id='searcher_autocomplete_#{unique_id}' style='padding:3px;width: 300px;' autofocus />".html_safe
     #else

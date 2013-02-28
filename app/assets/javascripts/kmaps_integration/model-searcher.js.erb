@@ -167,25 +167,25 @@ function ModelSearcher(){
 				this.treeNames = this.div.find('.tree-names');
 				this.treeRemove.hide();
 				this.treeRemove.click(function(){
-					thisModelSearcher.treeNames.html('');
-					thisModelSearcher.treeRemove.hide();
-					thisModelSearcher.hiddenIdInput.val('');
-					thisModelSearcher.selectedObjects = []
+					that.treeNames.html('');
+					that.treeRemove.hide();
+					that.hiddenIdInput.val('');
+					that.selectedObjects = []
 					return false;
 				});
 				this.treeLink.click(function(){
 					jQuery('.draggable-popup').hide();
-					if(thisModelSearcher.treeLoaded){
-	 					jQuery('#'+thisModelSearcher.treePopupId).show();
+					if(that.treeLoaded){
+	 					jQuery('#'+that.treePopupId).show();
 	 				}else{
-						thisModelSearcher.treeLoading.html(' <img src="../images/ajax-loader.gif" />');
-						jQuery.getJSON(thisModelSearcher.treeService, function(data){
-							thisModelSearcher.treeHtml = thisModelSearcher.createTreeFromArray(data.category ? data.category.categories : data.categories);
-							thisModelSearcher.loadPopup();
-							thisModelSearcher.treeHtml = null;
+						that.treeLoading.html(' <img src="../images/ajax-loader.gif" />');
+						jQuery.getJSON(that.treeService, function(data){
+							that.treeHtml = that.createTreeFromArray(data.category ? data.category.categories : data.categories);
+							that.loadPopup();
+							that.treeHtml = null;
 							data = null;
-							thisModelSearcher.treeLoading.html('');
-							thisModelSearcher.treeLoaded = true;
+							that.treeLoading.html('');
+							that.treeLoaded = true;
 						});
 					}
 					return false;
@@ -308,7 +308,7 @@ function ModelSearcher(){
 		});
 
 		// For large trees, keeping this in memory can cause performance issues, so we'll set it to null
-		// and use thisModelSearcher.treePopupId when we need it.
+		// and use that.treePopupId when we need it.
 		that.treePopup = null;
 	};
 	

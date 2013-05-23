@@ -1,4 +1,4 @@
-module KmapsIntegration
+module TopicalMapIntegration
   class Engine < ::Rails::Engine
   end
 end

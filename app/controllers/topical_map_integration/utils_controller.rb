@@ -1,4 +1,4 @@
-class KmapsIntegration::UtilsController < ApplicationController
+class TopicalMapIntegration::UtilsController < ApplicationController
   
   def proxy
     

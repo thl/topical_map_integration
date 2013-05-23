@@ -11,7 +11,7 @@ Rails.application.routes.draw do
       end
     end
   end
-  namespace :kmaps_integration do
+  namespace :topical_map_integration do
     match 'utils/proxy/' => 'utils#proxy'
   end
 end

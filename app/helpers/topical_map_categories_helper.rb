@@ -66,7 +66,7 @@ module TopicalMapCategoriesHelper
       result << "<input type='hidden' name=\"#{field_name_str}\" id='searcher_id_input_#{unique_id}' value=\"\" />" if options[:single_selection]
     else
       selected_categories.each do |c|
-        result << "<span id=\"#{unique_id}_bin_item_#{c.id}\" class=\"tree-names\" style=\"line-height:19px;white-space:nowrap;padding:2px 3px 2px 2px; color:#404040; background-color:#f1f1f1; border:1pt #ccc solid;margin-right:3px;font-size:7pt\"><a href=\"#\" class=\"tree-remove\">#{image_tag('kmaps_integration/delete.png', :size => '16x16', :border => '0', :alt => 'x', :style => 'display:inline;position:relative;top:4px;left:-2px')}</a>#{c.title}</span>\n"
+        result << "<span id=\"#{unique_id}_bin_item_#{c.id}\" class=\"tree-names\" style=\"line-height:19px;white-space:nowrap;padding:2px 3px 2px 2px; color:#404040; background-color:#f1f1f1; border:1pt #ccc solid;margin-right:3px;font-size:7pt\"><a href=\"#\" class=\"tree-remove\">#{image_tag('topical_map_integration/delete.png', :size => '16x16', :border => '0', :alt => 'x', :style => 'display:inline;position:relative;top:4px;left:-2px')}</a>#{c.title}</span>\n"
         result << "<input type='hidden' name=\"#{field_name_str}\" id='searcher_id_input_#{unique_id}' value=\"#{c.id }\" />\n"
       end
     end
@@ -91,14 +91,14 @@ module TopicalMapCategoriesHelper
   end
 
   def category_selector_includes_old
-    [javascript_include_tag('thickbox-compressed', 'kmaps_integration/category_selector'), stylesheet_link_tag('thickbox', 'kmaps_integration/category_selector')].join("\n").html_safe
+    [javascript_include_tag('thickbox-compressed', 'topical_map_integration/category_selector'), stylesheet_link_tag('thickbox', 'topical_map_integration/category_selector')].join("\n").html_safe
   end
   
   def category_searcher(includes = true, options = {})
     return_str = ''
     if includes
-      return_str << stylesheet_link_tag('kmaps_integration/application')
-      return_str << javascript_include_tag('kmaps_integration/application')
+      return_str << stylesheet_link_tag('topical_map_integration/application')
+      return_str << javascript_include_tag('topical_map_integration/application')
     end
     selected_object = ""
     category_id = options[:category_id]
@@ -143,8 +143,8 @@ module TopicalMapCategoriesHelper
     # The variable holding the ModelSearcher needs to be defined outside of jQuery(document).ready(), so that it
     # has global scope and can be accessed by other JavaScript if need be.
 
-    return_str = options[:include_js] ? javascript_include_tag('kmaps_integration/application') : ''
-    return_str << stylesheet_link_tag('kmaps_integration/application') if options[:include_styles]
+    return_str = options[:include_js] ? javascript_include_tag('topical_map_integration/application') : ''
+    return_str << stylesheet_link_tag('topical_map_integration/application') if options[:include_styles]
     
     div_id = "#{unique_id}_tmb_category_selector"
     selected_objects = selected_categories.collect{|c| "{id: '#{c.id}', name: '#{escape_javascript(c.title)}'}" }
@@ -218,6 +218,6 @@ module TopicalMapCategoriesHelper
   end
     
   def loading_kmaps_animation_script(id)
-    "$(\'##{id}_div\').css(\'background\', \'url(#{image_url('kmaps_integration/loadingAnimation2.gif')}) no-repeat center right\')"
+    "$(\'##{id}_div\').css(\'background\', \'url(#{image_url('topical_map_integration/loadingAnimation2.gif')}) no-repeat center right\')"
   end
 end

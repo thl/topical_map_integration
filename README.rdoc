@@ -1,4 +1,4 @@
-= KmapsIntegration
+= TopicalMapIntegration
 
 The Topical Map Builder was designed to centralize categories common to all THDL applications.
 Through the Topical Map Builder one integrates such categories into any rails app.

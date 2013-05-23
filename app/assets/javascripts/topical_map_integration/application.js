@@ -10,7 +10,7 @@
 // WARNING: THE FIRST BLANK LINE MARKS THE END OF WHAT'S TO BE PROCESSED, ANY BLANK LINE SHOULD
 // GO AFTER THE REQUIRES BELOW.
 //
-// Old used thickbox-compressed and kmaps_integration/category_selector
-//= require kmaps_integration/jquery.checktree
-//= require kmaps_integration/model-searcher
-//= require kmaps_integration/jquery.draggable.popup
+// Old used thickbox-compressed and topical_map_integration/category_selector
+//= require topical_map_integration/jquery.checktree
+//= require topical_map_integration/model-searcher
+//= require topical_map_integration/jquery.draggable.popup

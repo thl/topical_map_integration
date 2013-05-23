@@ -1,4 +1,4 @@
-<%= javascript_include_tag 'kmaps_integration/category_selector' %>
+<%= javascript_include_tag 'topical_map_integration/category_selector' %>
 <%= hidden_field_tag 'current_category_id', @category.nil? ? nil : @category.id %>
 <%= hidden_field_tag 'current_category_title', @category.nil? ? nil : @category.title %>
 <%= hidden_field_tag 'current_category_url', @category.nil? ? category_children_path(@main_category) : category_children_path(@main_category, :selected_category_id => @category.id) %>

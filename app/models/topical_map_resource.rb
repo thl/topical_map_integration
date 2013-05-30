@@ -2,7 +2,7 @@ class TopicalMapResource < ActiveResource::Base
   case InterfaceUtils::Server.environment
   when InterfaceUtils::Server::DEVELOPMENT
     self.site = 'http://127.0.0.1/'
-    headers['Host'] = 'dev-subjects.thlib.org'
+    headers['Host'] = 'dev-tmb.thlib.org'
   when InterfaceUtils::Server::STAGING
     self.site = 'http://127.0.0.1/'
     headers['Host'] = 'staging.subjects.thlib.org'
@@ -10,7 +10,7 @@ class TopicalMapResource < ActiveResource::Base
     self.site = 'http://127.0.0.1/'
     headers['Host'] = 'subjects.thlib.org'
   when InterfaceUtils::Server::LOCAL
-    self.site = 'http://localhost/thl/kmaps/'
+    self.site = 'http://localhost/thl/tmb/'
   when InterfaceUtils::Server::APOC
     self.site = 'http://subjects.kmaps.virginia.edu'
   when InterfaceUtils::Server::EBHUTAN

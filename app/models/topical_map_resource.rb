@@ -2,7 +2,7 @@ class TopicalMapResource < ActiveResource::Base
   case InterfaceUtils::Server.environment
   when InterfaceUtils::Server::DEVELOPMENT
     self.site = 'http://127.0.0.1/'
-    headers['Host'] = 'dev-tmb.thlib.org'
+    headers['Host'] = 'dev.tmb.thlib.org'
   when InterfaceUtils::Server::STAGING
     self.site = 'http://127.0.0.1/'
     headers['Host'] = 'staging.subjects.thlib.org'

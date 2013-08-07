@@ -124,7 +124,7 @@ module TopicalMapCategoriesHelper
         		fieldLabel: '#{field_label}',
         		selectedObjects: [#{selected_object}]#{searcher_options},
         		searcher: true,
-        		proxy: '#{ActionController::Base.config.relative_url_root}/proxy_engine/utils/proxy/?proxy_url='
+        		proxy: '#{proxy_engine_proxy_path}?proxy_url='
         	});
         });
       </script>".html_safe
@@ -159,7 +159,7 @@ module TopicalMapCategoriesHelper
               selectedRoot: '#{selected_root}',
               fieldName: '#{options[:field_name]}',
           		fieldLabel: '',
-          		proxy: '#{ActionController::Base.config.relative_url_root}/proxy_engine/utils/proxy/?proxy_url=',
+          		proxy: '#{proxy_engine_proxy_path}?proxy_url=',
           		list_url_root: '#{Category.get_url(:list, :format => 'json')}',
               all_url_root: '#{Category.get_url(:all, :format => 'json')}',
               list_url_topic: '#{Category.get_url_template(:list, :format => 'json')}',

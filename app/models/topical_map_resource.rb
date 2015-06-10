@@ -5,7 +5,7 @@ class TopicalMapResource < ActiveResource::Base
     headers['Host'] = 'dev.tmb.thlib.org'
   when InterfaceUtils::Server::STAGING
     self.site = 'http://127.0.0.1/'
-    headers['Host'] = 'staging.subjects.thlib.org'
+    headers['Host'] = 'staging-subjects.thlib.org'
   when InterfaceUtils::Server::PRODUCTION
     self.site = 'http://127.0.0.1/'
     headers['Host'] = 'subjects.thlib.org'

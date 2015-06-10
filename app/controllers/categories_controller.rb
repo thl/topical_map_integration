@@ -1,14 +1,14 @@
 require_dependency 'application_controller'
 
 class CategoriesController < ApplicationController
-  before_filter :find_main_category
+  before_action :find_main_category
   respond_to :html, :xml, :js
   
   # GET /categories
   # GET /categories.xml
   def index
     if @main_category.nil?
-      @categories = Category.find(:all, :conditions => {:parent_id => nil}, :order => 'title')
+      @categories = Category.where(:parent_id => nil).order('title')
     else
       @categories = @main_category.children
     end
@@ -28,7 +28,7 @@ class CategoriesController < ApplicationController
   def show
     @category = Category.find(params[:id])
     if @main_category.nil?
-      @categories = Category.find(:all, :conditions => {:parent_id => nil}, :order => 'title')
+      @categories = Category.where(:parent_id => nil).order('title')
     else
       @categories = @main_category.children
     end

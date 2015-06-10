@@ -4,7 +4,7 @@ Rails.application.routes.draw do
       get :expand
       get :contract
     end
-    resources :children, :controller => 'categories' do
+    resources :children, controller: 'categories' do
       member do
         get :expand
         get :contract
